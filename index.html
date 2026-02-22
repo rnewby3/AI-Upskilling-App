@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAIO Skills Navigator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">CAIO Upskilling System</p>
+      <h1>Build your path from BI Architect to AI Enablement Leader</h1>
+      <p class="subtitle">Track skills, monitor adoption, and make security-first AI decisions with executive-ready clarity.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card">
+        <p>Overall Progress</p>
+        <h2 id="overall-progress">0%</h2>
+      </div>
+      <div class="stat-card">
+        <p>Completed Modules</p>
+        <h2 id="completed-modules">0 / 0</h2>
+      </div>
+      <div class="stat-card">
+        <p>Security Coverage</p>
+        <h2 id="security-progress">0%</h2>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel">
+      <div class="panel-head">
+        <h3>Roadmap</h3>
+        <button id="reset-progress" class="btn ghost">Reset Progress</button>
+      </div>
+      <div id="roadmap"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h3>Executive Alignment</h3>
+      </div>
+      <div id="stakeholders"></div>
+      <div class="metric-grid">
+        <label>
+          AI Active Users (monthly)
+          <input type="number" id="metric-users" min="0" />
+        </label>
+        <label>
+          Time Saved (hours/month)
+          <input type="number" id="metric-hours" min="0" />
+        </label>
+        <label>
+          Risk Issues Open
+          <input type="number" id="metric-risks" min="0" />
+        </label>
+      </div>
+    </section>
+
+    <section class="panel wide">
+      <div class="panel-head">
+        <h3>AI Radar and Security Briefs</h3>
+      </div>
+      <form id="radar-form" class="radar-form">
+        <input id="radar-name" required placeholder="Tool or Trend (e.g., Clawdbot)" />
+        <input id="radar-date" type="date" required />
+        <select id="radar-risk" required>
+          <option value="">Risk Level</option>
+          <option>Low</option>
+          <option>Medium</option>
+          <option>High</option>
+        </select>
+        <textarea id="radar-summary" required placeholder="What it is and why it matters"></textarea>
+        <textarea id="radar-security" required placeholder="Security concerns, data boundaries, controls"></textarea>
+        <textarea id="radar-reco" required placeholder="Recommendation: adopt, pilot, monitor, or reject"></textarea>
+        <button class="btn" type="submit">Add Brief</button>
+      </form>
+      <div id="radar-list" class="radar-list"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h3>Data</h3>
+      </div>
+      <div class="button-row">
+        <button id="export-data" class="btn">Export Snapshot</button>
+        <label class="btn ghost file-btn">
+          Import Snapshot
+          <input type="file" id="import-data" accept="application/json" />
+        </label>
+      </div>
+      <p class="muted">Use snapshots to move progress between devices or to seed a shared baseline.</p>
+    </section>
+  </main>
+
+  <template id="module-template">
+    <article class="module-card">
+      <div class="module-head">
+        <h4></h4>
+        <p class="tag"></p>
+      </div>
+      <p class="module-desc"></p>
+      <label class="check">
+        <input type="checkbox" /> Completed
+      </label>
+      <textarea class="module-notes" rows="2" placeholder="Notes, actions, or artifacts"></textarea>
+    </article>
+  </template>
+
+  <template id="stakeholder-template">
+    <article class="stakeholder-card">
+      <h4></h4>
+      <label class="check"><input type="checkbox" /> Expectations mapped</label>
+      <label class="check"><input type="checkbox" /> Cadence defined</label>
+      <label class="check"><input type="checkbox" /> Success metrics agreed</label>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
