@@ -3,121 +3,278 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CAIO Skills Navigator</title>
+  <title>CAIO Skills — Chief AI Officer Training</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="hero">
-    <div>
-      <p class="eyebrow">CAIO Upskilling System</p>
-      <h1>Build your path from BI Architect to AI Enablement Leader</h1>
-      <p class="subtitle">Track skills, monitor adoption, and make security-first AI decisions with executive-ready clarity.</p>
-    </div>
-    <div class="hero-stats">
-      <div class="stat-card">
-        <p>Overall Progress</p>
-        <h2 id="overall-progress">0%</h2>
-      </div>
-      <div class="stat-card">
-        <p>Completed Modules</p>
-        <h2 id="completed-modules">0 / 0</h2>
-      </div>
-      <div class="stat-card">
-        <p>Security Coverage</p>
-        <h2 id="security-progress">0%</h2>
-      </div>
-    </div>
-  </header>
 
-  <main class="layout">
-    <section class="panel">
-      <div class="panel-head">
-        <h3>Roadmap</h3>
-        <button id="reset-progress" class="btn ghost">Reset Progress</button>
-      </div>
-      <div id="roadmap"></div>
-    </section>
+  <!-- NAV -->
+  <nav class="topnav">
+    <div class="nav-brand">
+      <span class="brand-icon">⬡</span>
+      <span class="brand-name">CAIO Skills</span>
+    </div>
+    <div class="nav-links">
+      <button class="nav-btn active" data-view="home">Home</button>
+      <button class="nav-btn" data-view="curriculum">Curriculum</button>
+      <button class="nav-btn" data-view="radar">AI Radar</button>
+      <button class="nav-btn" data-view="resources">Resources</button>
+      <button class="nav-btn" data-view="data">Data</button>
+    </div>
+    <div class="nav-progress-pill" id="nav-progress-pill">0% complete</div>
+  </nav>
 
-    <section class="panel">
-      <div class="panel-head">
-        <h3>Executive Alignment</h3>
+  <!-- ── HOME ── -->
+  <div id="view-home" class="view">
+    <section class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">Chief AI Officer Training</p>
+        <h1>Everything you need to<br><span class="gradient-word">become a CAIO</span></h1>
+        <p class="hero-sub">A structured knowledge base covering AI strategy, governance, security, adoption, and executive leadership — built for practitioners stepping into enterprise AI enablement.</p>
+        <div class="hero-cta">
+          <button class="btn primary" data-goto="curriculum">Start Learning</button>
+          <button class="btn ghost" data-goto="radar">View AI Radar</button>
+        </div>
       </div>
-      <div id="stakeholders"></div>
-      <div class="metric-grid">
-        <label>
-          AI Active Users (monthly)
-          <input type="number" id="metric-users" min="0" />
-        </label>
-        <label>
-          Time Saved (hours/month)
-          <input type="number" id="metric-hours" min="0" />
-        </label>
-        <label>
-          Risk Issues Open
-          <input type="number" id="metric-risks" min="0" />
-        </label>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <span class="stat-label">Modules Complete</span>
+          <strong id="stat-done">0 / 0</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Overall Progress</span>
+          <strong id="stat-pct">0%</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Security Coverage</span>
+          <strong id="stat-sec">0%</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Radar Briefs</span>
+          <strong id="stat-radar">0</strong>
+        </div>
       </div>
     </section>
 
-    <section class="panel wide">
-      <div class="panel-head">
-        <h3>AI Radar and Security Briefs</h3>
+    <section class="home-tracks">
+      <h2 class="section-title">Learning Tracks</h2>
+      <div id="track-grid" class="track-grid"></div>
+    </section>
+
+    <section class="home-bottom">
+      <div class="home-pane">
+        <h3>Latest AI Radar</h3>
+        <div id="radar-preview"></div>
+        <button class="btn text-btn" data-goto="radar">View All Briefs →</button>
       </div>
+      <div class="home-pane">
+        <h3>Why a CAIO?</h3>
+        <p class="body-text">AI adoption is accelerating faster than most organisations can safely govern it. The CAIO role exists at the intersection of <strong>strategy, security, and culture</strong> — ensuring the business captures AI value without creating technical debt, legal exposure, or eroding trust.</p>
+        <p class="body-text">This site covers the complete CAIO skill set: from governing LLM vendors and protecting sensitive data, to running an executive AI rhythm and proving ROI to the board.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ── CURRICULUM ── -->
+  <div id="view-curriculum" class="view hidden">
+    <section class="page-header">
+      <div>
+        <h2>Curriculum</h2>
+        <p class="page-sub">Eight tracks covering the full CAIO competency map. Work through each module in order, or jump to what's most relevant right now.</p>
+      </div>
+      <div class="curriculum-progress-wrap">
+        <span id="curriculum-pct-label">0%</span>
+        <div class="curriculum-bar">
+          <div class="bar-track" id="curriculum-bar-fill"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="curriculum-layout">
+      <aside class="track-sidebar" id="track-sidebar"></aside>
+      <main id="track-content" class="track-content"></main>
+    </div>
+  </div>
+
+  <!-- ── AI RADAR ── -->
+  <div id="view-radar" class="view hidden">
+    <section class="page-header">
+      <div>
+        <h2>AI Radar</h2>
+        <p class="page-sub">Security-first briefings on AI tools, models, and trends. Document your assessment, risk posture, and recommended action for each.</p>
+      </div>
+      <button class="btn primary" id="open-radar-form">+ Add Brief</button>
+    </section>
+
+    <div id="radar-form-container" class="radar-form-container hidden">
       <form id="radar-form" class="radar-form">
-        <input id="radar-name" required placeholder="Tool or Trend (e.g., Clawdbot)" />
-        <input id="radar-date" type="date" required />
-        <select id="radar-risk" required>
-          <option value="">Risk Level</option>
-          <option>Low</option>
-          <option>Medium</option>
-          <option>High</option>
-        </select>
-        <textarea id="radar-summary" required placeholder="What it is and why it matters"></textarea>
-        <textarea id="radar-security" required placeholder="Security concerns, data boundaries, controls"></textarea>
-        <textarea id="radar-reco" required placeholder="Recommendation: adopt, pilot, monitor, or reject"></textarea>
-        <button class="btn" type="submit">Add Brief</button>
+        <h4 class="form-heading">New AI Radar Brief</h4>
+        <div class="form-row3">
+          <div class="form-field">
+            <label>Tool or Trend</label>
+            <input id="radar-name" required placeholder="e.g. Clawdbot, GPT-o3" />
+          </div>
+          <div class="form-field">
+            <label>Date</label>
+            <input id="radar-date" type="date" required />
+          </div>
+          <div class="form-field">
+            <label>Risk Level</label>
+            <select id="radar-risk" required>
+              <option value="">Select risk…</option>
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>What it is &amp; why it matters</label>
+          <textarea id="radar-summary" required rows="3" placeholder="Plain-language summary — what does this tool do and why is the enterprise paying attention to it?"></textarea>
+        </div>
+        <div class="form-field">
+          <label>Security Lens</label>
+          <textarea id="radar-security" required rows="3" placeholder="Data retention, tenant isolation, prompt injection risk, compliance posture, connector auth model…"></textarea>
+        </div>
+        <div class="form-field">
+          <label>Recommendation</label>
+          <textarea id="radar-reco" required rows="2" placeholder="Adopt, pilot, monitor, or reject — and the specific conditions or controls required."></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn primary" type="submit">Save Brief</button>
+          <button class="btn ghost" type="button" id="cancel-radar-form">Cancel</button>
+        </div>
       </form>
-      <div id="radar-list" class="radar-list"></div>
-    </section>
+    </div>
 
-    <section class="panel">
-      <div class="panel-head">
-        <h3>Data</h3>
+    <div id="radar-filters" class="radar-filters">
+      <button class="filter-pill active" data-risk="all">All</button>
+      <button class="filter-pill" data-risk="High">High Risk</button>
+      <button class="filter-pill" data-risk="Medium">Medium Risk</button>
+      <button class="filter-pill" data-risk="Low">Low Risk</button>
+    </div>
+
+    <div id="radar-list" class="radar-list"></div>
+  </div>
+
+  <!-- ── RESOURCES ── -->
+  <div id="view-resources" class="view hidden">
+    <section class="page-header">
+      <div>
+        <h2>Resources</h2>
+        <p class="page-sub">Curated frameworks, publications, certifications, and tools every CAIO should know.</p>
       </div>
-      <div class="button-row">
-        <button id="export-data" class="btn">Export Snapshot</button>
+    </section>
+    <div id="resources-grid"></div>
+  </div>
+
+  <!-- ── RESOURCE CATEGORY ── -->
+  <div id="view-resource-category" class="view hidden">
+    <div class="detail-back-bar">
+      <button id="res-cat-back-btn" class="btn ghost">← Back to Resources</button>
+      <span id="res-cat-breadcrumb" style="font-size:.85rem;color:var(--ink-3)"></span>
+    </div>
+    <section class="page-header" style="margin-bottom:1rem">
+      <div>
+        <h2 id="res-cat-title"></h2>
+        <p class="page-sub" id="res-cat-count"></p>
+      </div>
+    </section>
+    <div id="res-cat-filter-row" class="res-cat-filter-row"></div>
+    <div id="res-cat-grid" class="res-cat-grid"></div>
+  </div>
+
+  <!-- ── DATA ── -->
+  <div id="view-data" class="view hidden">
+    <section class="page-header">
+      <div>
+        <h2>Your Data</h2>
+        <p class="page-sub">All progress, notes, and radar briefs are stored locally in your browser. Use snapshots to move between devices or share a baseline.</p>
+      </div>
+    </section>
+    <div class="data-panel">
+      <div class="data-card">
+        <h4>Export Snapshot</h4>
+        <p>Download a full JSON backup of your progress, notes, and all radar briefs.</p>
+        <button id="export-data" class="btn primary">Download Snapshot</button>
+      </div>
+      <div class="data-card">
+        <h4>Import Snapshot</h4>
+        <p>Restore from a previously exported snapshot. This will overwrite your current state.</p>
         <label class="btn ghost file-btn">
-          Import Snapshot
+          Choose File
           <input type="file" id="import-data" accept="application/json" />
         </label>
       </div>
-      <p class="muted">Use snapshots to move progress between devices or to seed a shared baseline.</p>
-    </section>
-  </main>
-
-  <template id="module-template">
-    <article class="module-card">
-      <div class="module-head">
-        <h4></h4>
-        <p class="tag"></p>
+      <div class="data-card danger-card">
+        <h4>Reset All Progress</h4>
+        <p>Clear all local progress, notes, and radar briefs. Cannot be undone.</p>
+        <button id="reset-progress" class="btn danger">Reset Everything</button>
       </div>
-      <p class="module-desc"></p>
-      <label class="check">
-        <input type="checkbox" /> Completed
-      </label>
-      <textarea class="module-notes" rows="2" placeholder="Notes, actions, or artifacts"></textarea>
-    </article>
-  </template>
+    </div>
 
-  <template id="stakeholder-template">
-    <article class="stakeholder-card">
-      <h4></h4>
-      <label class="check"><input type="checkbox" /> Expectations mapped</label>
-      <label class="check"><input type="checkbox" /> Cadence defined</label>
-      <label class="check"><input type="checkbox" /> Success metrics agreed</label>
+    <div class="metrics-section">
+      <h3>Adoption Metrics</h3>
+      <p class="body-text muted">Track your organisation's AI adoption numbers here. These are saved with your snapshot.</p>
+      <div class="metric-grid">
+        <label class="metric-label">
+          AI Active Users (monthly)
+          <input type="number" id="metric-users" min="0" placeholder="0" />
+        </label>
+        <label class="metric-label">
+          Time Saved (hours/month)
+          <input type="number" id="metric-hours" min="0" placeholder="0" />
+        </label>
+        <label class="metric-label">
+          Open Risk Issues
+          <input type="number" id="metric-risks" min="0" placeholder="0" />
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODULE DETAIL PAGE ── -->
+  <div id="view-module-detail" class="view hidden">
+    <div class="detail-back-bar">
+      <button class="btn ghost detail-back-btn" id="detail-back-btn">← Back to Curriculum</button>
+      <span class="detail-breadcrumb" id="detail-breadcrumb"></span>
+    </div>
+    <div id="detail-content"></div>
+  </div>
+
+  <!-- TEMPLATE -->
+  <template id="module-tpl">
+    <article class="module-card">
+      <div class="module-clickzone" role="button" tabindex="0">
+        <div class="module-meta-row">
+          <div class="module-meta">
+            <span class="module-num"></span>
+            <span class="module-duration"></span>
+          </div>
+          <span class="module-expand-icon">▾</span>
+        </div>
+        <h4 class="module-title"></h4>
+        <p class="module-summary"></p>
+      </div>
+      <div class="module-body hidden">
+        <div class="module-key-points">
+          <h5>Key Concepts</h5>
+          <ul class="key-point-list"></ul>
+        </div>
+        <div class="module-checklist hidden">
+          <h5>Checklist</h5>
+          <ul class="checklist-list"></ul>
+        </div>
+      </div>
+      <div class="module-footer">
+        <label class="module-check">
+          <input type="checkbox" /> Mark complete
+        </label>
+        <button class="module-deepdive-btn btn ghost hidden">Start Module →</button>
+      </div>
     </article>
   </template>
 
