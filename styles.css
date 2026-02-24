@@ -860,18 +860,8 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
 [data-theme="dark"] .track-pct,
 [data-theme="dark"] .detail-breadcrumb { color: #8b96a8; }
 
-/* ─── BMC FLOATING BUTTON ─────────────────────────────────── */
-.bmc-float {
-  position: fixed; bottom: 1.25rem; left: 1.25rem; z-index: 9999;
-  display: inline-flex; align-items: center; gap: .5rem;
-  background: #5F7FFF; color: #fff; font-weight: 700;
-  padding: .65rem 1.25rem; border-radius: 2rem;
-  text-decoration: none; font-size: .92rem;
-  box-shadow: 0 4px 16px rgba(95,127,255,.45);
-  transition: opacity .15s, transform .15s;
-  font-family: "Poppins", "Inter", sans-serif;
-}
-.bmc-float:hover { opacity: .9; transform: translateY(-2px); }
+/* ─── BMC FLOAT FALLBACK ───────────────────────────────────── */
+/* (removed — BMC button lives in the footer) */
 
 /* ─── SITE FOOTER ─────────────────────────────────────── */
 .site-footer {
