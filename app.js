@@ -578,11 +578,23 @@ let currentTrack = tracks[0].id;
 
 function initNav() {
   document.querySelectorAll(".nav-btn").forEach((btn) => {
-    btn.addEventListener("click", () => showView(btn.dataset.view));
+    btn.addEventListener("click", () => {
+      showView(btn.dataset.view);
+      document.querySelector(".topnav")?.classList.remove("nav-open");
+    });
   });
   document.querySelectorAll("[data-goto]").forEach((btn) => {
     btn.addEventListener("click", () => showView(btn.dataset.goto));
   });
+  // Logo → home
+  document.getElementById("nav-brand")?.addEventListener("click", () => {
+    showView("home");
+    document.querySelector(".topnav")?.classList.remove("nav-open");
+  });
+  // Hamburger toggle
+  const hamburger = document.getElementById("nav-hamburger");
+  const topnav = document.querySelector(".topnav");
+  hamburger?.addEventListener("click", () => topnav?.classList.toggle("nav-open"));
 }
 
 function showView(view, pushHistory = true) {
@@ -636,7 +648,7 @@ function updateStats() {
   setEl("stat-done", `${done} / ${total}`);
   setEl("stat-pct", `${pct}%`);
   setEl("stat-sec", `${secPct}%`);
-  setEl("stat-radar", String((state.radar || []).length));
+  setEl("stat-radar", String((state.radar || []).filter((r) => !r.hidden).length));
   setEl("nav-progress-pill", `${pct}% complete`);
 
   const barFill = document.getElementById("curriculum-bar-fill");
@@ -656,6 +668,12 @@ function trackProgress(track) {
 function setEl(id, text) {
   const el = document.getElementById(id);
   if (el) el.textContent = text;
+}
+
+function esc(str) {
+  const d = document.createElement("div");
+  d.textContent = String(str ?? "");
+  return d.innerHTML;
 }
 
 // ─── HOME — TRACK CARDS ───────────────────────────────────────
@@ -701,14 +719,14 @@ function updateTrackCards() {
 function renderRadarPreview() {
   const host = document.getElementById("radar-preview");
   if (!host) return;
-  const latest = [...(state.radar || [])].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 2);
+  const latest = [...(state.radar || [])].filter((i) => !i.hidden).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 2);
   host.innerHTML = latest.length
     ? latest.map((item) => `
       <div class="radar-preview-card">
-        <h5>${item.name} <span class="risk ${(item.risk || "").toLowerCase()}" style="font-size:.65rem">${item.risk} Risk</span></h5>
-        <p>${item.summary.slice(0, 120)}…</p>
+        <h5>${esc(item.name)} <span class="risk ${esc((item.risk || "").toLowerCase())}" style="font-size:.65rem">${esc(item.risk)} Risk</span></h5>
+        <p>${esc(item.summary.slice(0, 120))}…</p>
       </div>`).join("")
-    : `<p style="color:var(--ink-3);font-size:.9rem">No radar briefs yet. <button class="btn text-btn" data-goto="radar">Add one →</button></p>`;
+    : `<p style="color:var(--ink-3);font-size:.9rem">No radar briefs yet.</p>`;
 }
 
 // ─── CURRICULUM ───────────────────────────────────────────────
@@ -809,6 +827,7 @@ function renderTrackContent(trackId) {
       node.classList.toggle("done", check.checked);
       saveState();
       updateStats();
+      if (check.checked) checkCourseComplete();
     });
 
     // Start Module button or Coming Soon badge
@@ -832,18 +851,37 @@ function renderTrackContent(trackId) {
   });
 }
 
+// ─── COURSE COMPLETION ────────────────────────────────────────
+function checkCourseComplete() {
+  const all = allModules();
+  const done = all.filter((m) => state.moduleState[m.id]?.done).length;
+  if (done === all.length) showCompletionModal();
+}
+
+function showCompletionModal() {
+  const modal = document.getElementById("completion-modal");
+  if (!modal) return;
+  modal.classList.remove("hidden");
+  if (typeof confetti === "function") {
+    confetti({ particleCount: 160, spread: 80, origin: { y: 0.5 } });
+    setTimeout(() => confetti({ particleCount: 80, spread: 120, origin: { y: 0.4 }, angle: 60 }), 400);
+    setTimeout(() => confetti({ particleCount: 80, spread: 120, origin: { y: 0.4 }, angle: 120 }), 800);
+  }
+}
+
 // ─── RADAR ────────────────────────────────────────────────────
 let radarFilter = "all";
 
 function renderRadar() {
   const host = document.getElementById("radar-list");
   if (!host) return;
-  const list = [...(state.radar || [])].sort((a, b) => b.date.localeCompare(a.date));
+  const list = [...(state.radar || [])].filter((i) => !i.hidden).sort((a, b) => b.date.localeCompare(a.date));
   const filtered = radarFilter === "all" ? list : list.filter((i) => i.risk === radarFilter);
 
   host.innerHTML = "";
   if (!filtered.length) {
-    host.innerHTML = `<p style="color:var(--ink-3);padding:1rem 0">No briefs match this filter.</p>`;
+    host.innerHTML = `<p style="color:var(--ink-3);padding:1rem 0">No active briefs match this filter.</p>`;
+    renderHiddenRadar();
     return;
   }
 
@@ -856,20 +894,81 @@ function renderRadar() {
 
     card.innerHTML = `
       <div class="radar-top">
-        <h4>${item.name}</h4>
+        <h4>${esc(item.name)}</h4>
         <div class="radar-top-right">
-          <span class="risk ${(item.risk || "").toLowerCase()}">${item.risk} Risk</span>
-          <button class="radar-delete" data-id="${item.id}" title="Delete brief">✕ Delete</button>
+          <span class="risk ${esc((item.risk || "").toLowerCase())}">${esc(item.risk)} Risk</span>
+          <button class="radar-hide" data-id="${esc(item.id)}" title="Hide brief">👁 Hide</button>
         </div>
       </div>
-      <div class="radar-field"><strong>Date:</strong> ${item.date}</div>
-      <div class="radar-field"><strong>What it is:</strong> ${item.summary}</div>
-      <div class="radar-field"><strong>Security lens:</strong> ${item.security}</div>
-      <div class="radar-field"><strong>Recommendation:</strong> ${item.recommendation}</div>`;
+      <div class="radar-field"><strong>Date:</strong> ${esc(item.date)}</div>
+      <div class="radar-field"><strong>What it is:</strong> ${esc(item.summary)}</div>
+      <div class="radar-field"><strong>Security lens:</strong> ${esc(item.security)}</div>
+      <div class="radar-field"><strong>Recommendation:</strong> ${esc(item.recommendation)}</div>`;
 
-    card.querySelector(".radar-delete").addEventListener("click", (e) => {
+    card.querySelector(".radar-hide").addEventListener("click", (e) => {
       const id = e.currentTarget.dataset.id;
-      if (!confirm("Delete this radar brief?")) return;
+      const brief = (state.radar || []).find((r) => r.id === id);
+      if (brief) brief.hidden = true;
+      saveState();
+      renderRadar();
+      renderRadarPreview();
+    });
+
+    host.appendChild(card);
+  });
+  renderHiddenRadar();
+}
+
+function renderHiddenRadar() {
+  const section = document.getElementById("radar-hidden-section");
+  const host = document.getElementById("radar-hidden-list");
+  if (!section || !host) return;
+
+  const sortVal = document.getElementById("radar-hidden-sort")?.value || "date-desc";
+  const filterVal = document.getElementById("radar-hidden-filter")?.value || "all";
+  let list = (state.radar || []).filter((i) => i.hidden);
+  if (filterVal !== "all") list = list.filter((i) => i.risk === filterVal);
+  list = list.sort((a, b) => sortVal === "date-asc"
+    ? a.date.localeCompare(b.date)
+    : b.date.localeCompare(a.date));
+
+  if (!list.length) { section.style.display = "none"; return; }
+  section.style.display = "";
+
+  const riskColors = { Low: "#15803d", Medium: "#a16207", High: "#dc2626" };
+  host.innerHTML = "";
+
+  list.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "radar-item is-hidden";
+    card.style.setProperty("--risk-color", riskColors[item.risk] || "var(--line)");
+
+    card.innerHTML = `
+      <div class="radar-top">
+        <h4>${esc(item.name)}</h4>
+        <div class="radar-top-right">
+          <span class="risk ${esc((item.risk || "").toLowerCase())}">${esc(item.risk)} Risk</span>
+          <button class="radar-restore" data-id="${esc(item.id)}" title="Restore brief">↩ Restore</button>
+          <button class="radar-perm-delete" data-id="${esc(item.id)}" title="Permanently delete">✕</button>
+        </div>
+      </div>
+      <div class="radar-field"><strong>Date:</strong> ${esc(item.date)}</div>
+      <div class="radar-field"><strong>What it is:</strong> ${esc(item.summary)}</div>
+      <div class="radar-field"><strong>Security lens:</strong> ${esc(item.security)}</div>
+      <div class="radar-field"><strong>Recommendation:</strong> ${esc(item.recommendation)}</div>`;
+
+    card.querySelector(".radar-restore").addEventListener("click", (e) => {
+      const id = e.currentTarget.dataset.id;
+      const brief = (state.radar || []).find((r) => r.id === id);
+      if (brief) delete brief.hidden;
+      saveState();
+      renderRadar();
+      renderRadarPreview();
+    });
+
+    card.querySelector(".radar-perm-delete").addEventListener("click", (e) => {
+      const id = e.currentTarget.dataset.id;
+      if (!confirm("Permanently delete this radar brief?")) return;
       state.radar = (state.radar || []).filter((r) => r.id !== id);
       saveState();
       renderRadar();
@@ -881,41 +980,6 @@ function renderRadar() {
 }
 
 function wireRadarForm() {
-  const openBtn = document.getElementById("open-radar-form");
-  const cancelBtn = document.getElementById("cancel-radar-form");
-  const formContainer = document.getElementById("radar-form-container");
-  const form = document.getElementById("radar-form");
-
-  openBtn?.addEventListener("click", () => {
-    formContainer.classList.toggle("hidden");
-    openBtn.textContent = formContainer.classList.contains("hidden") ? "+ Add Brief" : "✕ Close Form";
-  });
-  cancelBtn?.addEventListener("click", () => {
-    formContainer.classList.add("hidden");
-    openBtn.textContent = "+ Add Brief";
-    form.reset();
-  });
-
-  form?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    state.radar = state.radar || [];
-    state.radar.push({
-      id: crypto.randomUUID(),
-      name: document.getElementById("radar-name").value.trim(),
-      date: document.getElementById("radar-date").value,
-      risk: document.getElementById("radar-risk").value,
-      summary: document.getElementById("radar-summary").value.trim(),
-      security: document.getElementById("radar-security").value.trim(),
-      recommendation: document.getElementById("radar-reco").value.trim(),
-    });
-    saveState();
-    renderRadar();
-    renderRadarPreview();
-    form.reset();
-    formContainer.classList.add("hidden");
-    openBtn.textContent = "+ Add Brief";
-  });
-
   document.querySelectorAll(".filter-pill").forEach((pill) => {
     pill.addEventListener("click", () => {
       document.querySelectorAll(".filter-pill").forEach((p) => p.classList.remove("active"));
@@ -924,6 +988,8 @@ function wireRadarForm() {
       renderRadar();
     });
   });
+  document.getElementById("radar-hidden-sort")?.addEventListener("change", renderHiddenRadar);
+  document.getElementById("radar-hidden-filter")?.addEventListener("change", renderHiddenRadar);
 }
 
 // ─── RESOURCES ────────────────────────────────────────────────
@@ -6805,6 +6871,7 @@ function openModuleDetailPage(moduleId, pushHistory = true) {
       state.moduleState[moduleId] = { ...(state.moduleState[moduleId] || {}), done: detailCheckEl.checked };
       saveState();
       updateStats();
+      if (detailCheckEl.checked) checkCourseComplete();
       const currCheck = document.querySelector(`[data-module-id="${moduleId}"]`);
       if (currCheck) { currCheck.checked = detailCheckEl.checked; }
     });
@@ -6816,6 +6883,7 @@ function openModuleDetailPage(moduleId, pushHistory = true) {
     state.moduleState[moduleId] = { ...(state.moduleState[moduleId] || {}), done: true };
     saveState();
     updateStats();
+    checkCourseComplete();
     const currCheck = document.querySelector(`[data-module-id="${moduleId}"]`);
     if (currCheck) currCheck.checked = true;
     const currCard = currCheck?.closest(".module-card");
@@ -6864,6 +6932,11 @@ function init() {
   wireDataActions();
   wireMetrics();
   updateStats();
+  // Completion modal close
+  document.getElementById("completion-close")?.addEventListener("click", () => {
+    document.getElementById("completion-modal")?.classList.add("hidden");
+    showView("home");
+  });
   // Stamp initial history entry so the back button can always return home
   history.replaceState({ view: "home" }, "", "#home");
 }
