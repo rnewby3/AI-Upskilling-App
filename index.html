@@ -13,10 +13,10 @@
 
   <!-- NAV -->
   <nav class="topnav">
-    <div class="nav-brand">
+    <button class="nav-brand" id="nav-brand" aria-label="Go to home">
       <span class="brand-icon">⬡</span>
       <span class="brand-name">CAIO Skills</span>
-    </div>
+    </button>
     <div class="nav-links">
       <button class="nav-btn active" data-view="home">Home</button>
       <button class="nav-btn" data-view="curriculum">Curriculum</button>
@@ -24,8 +24,11 @@
       <button class="nav-btn" data-view="resources">Resources</button>
       <button class="nav-btn" data-view="data">Data</button>
     </div>
-    <div class="nav-progress-pill" id="nav-progress-pill">0% complete</div>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark/light mode">🌙</button>
+    <div class="nav-right">
+      <div class="nav-progress-pill" id="nav-progress-pill">0% complete</div>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark/light mode">🌙</button>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">☰</button>
+    </div>
   </nav>
 
   <!-- ── HOME ── -->
@@ -105,51 +108,9 @@
     <section class="page-header">
       <div>
         <h2>AI Radar</h2>
-        <p class="page-sub">Security-first briefings on AI tools, models, and trends. Document your assessment, risk posture, and recommended action for each.</p>
+        <p class="page-sub">Security-first briefings on AI tools, models, and trends. Assess risk posture and recommended action for each.</p>
       </div>
-      <button class="btn primary" id="open-radar-form">+ Add Brief</button>
     </section>
-
-    <div id="radar-form-container" class="radar-form-container hidden">
-      <form id="radar-form" class="radar-form">
-        <h4 class="form-heading">New AI Radar Brief</h4>
-        <div class="form-row3">
-          <div class="form-field">
-            <label>Tool or Trend</label>
-            <input id="radar-name" required placeholder="e.g. Clawdbot, GPT-o3" />
-          </div>
-          <div class="form-field">
-            <label>Date</label>
-            <input id="radar-date" type="date" required />
-          </div>
-          <div class="form-field">
-            <label>Risk Level</label>
-            <select id="radar-risk" required>
-              <option value="">Select risk…</option>
-              <option>Low</option>
-              <option>Medium</option>
-              <option>High</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-field">
-          <label>What it is &amp; why it matters</label>
-          <textarea id="radar-summary" required rows="3" placeholder="Plain-language summary — what does this tool do and why is the enterprise paying attention to it?"></textarea>
-        </div>
-        <div class="form-field">
-          <label>Security Lens</label>
-          <textarea id="radar-security" required rows="3" placeholder="Data retention, tenant isolation, prompt injection risk, compliance posture, connector auth model…"></textarea>
-        </div>
-        <div class="form-field">
-          <label>Recommendation</label>
-          <textarea id="radar-reco" required rows="2" placeholder="Adopt, pilot, monitor, or reject — and the specific conditions or controls required."></textarea>
-        </div>
-        <div class="form-actions">
-          <button class="btn primary" type="submit">Save Brief</button>
-          <button class="btn ghost" type="button" id="cancel-radar-form">Cancel</button>
-        </div>
-      </form>
-    </div>
 
     <div id="radar-filters" class="radar-filters">
       <button class="filter-pill active" data-risk="all">All</button>
@@ -159,6 +120,25 @@
     </div>
 
     <div id="radar-list" class="radar-list"></div>
+
+    <div id="radar-hidden-section" class="radar-hidden-section">
+      <div class="radar-hidden-header">
+        <h3>Hidden / Completed Briefs</h3>
+        <div class="radar-hidden-controls">
+          <select id="radar-hidden-sort" class="radar-control-select">
+            <option value="date-desc">Newest first</option>
+            <option value="date-asc">Oldest first</option>
+          </select>
+          <select id="radar-hidden-filter" class="radar-control-select">
+            <option value="all">All Risk Levels</option>
+            <option value="High">High Risk</option>
+            <option value="Medium">Medium Risk</option>
+            <option value="Low">Low Risk</option>
+          </select>
+        </div>
+      </div>
+      <div id="radar-hidden-list" class="radar-list"></div>
+    </div>
   </div>
 
   <!-- ── RESOURCES ── -->
@@ -279,6 +259,36 @@
     </article>
   </template>
 
+  <!-- ── COMPLETION MODAL ── -->
+  <div id="completion-modal" class="completion-overlay hidden">
+    <div class="completion-card">
+      <p class="completion-emoji">🎓</p>
+      <h2>Course Complete!</h2>
+      <p class="completion-msg">Congratulations — you've completed the full CAIO curriculum. You're ready to lead enterprise AI.</p>
+      <p class="completion-sub">This site is 100% ad-free and always will be — your support is what makes that possible.</p>
+      <a href="https://www.buymeacoffee.com/rnewby3" target="_blank" rel="noopener" class="bmc-btn-link">🍺 Buy me a beer</a>
+      <button class="btn ghost" id="completion-close">Back to Dashboard</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="rnewby3" data-color="#5F7FFF" data-emoji="🍺" data-font="Poppins" data-text="Buy me a beer" data-outline-color="#000000" data-font-color="#ffffff" data-coffee-color="#FFDD00"></script>
   <script src="app.js"></script>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-copy">
+        <span class="footer-brand">⬡ CAIO Skills</span>
+        <span>© <span id="footer-year"></span> Richard Newby. All rights reserved.</span>
+        <span>Built for practitioners stepping into enterprise AI leadership.</span>
+      </div>
+      <div class="footer-bmc">
+        <span class="footer-bmc-msg">This site is 100% ad-free &mdash; if it's been useful, consider buying me a beer!</span>
+        <a href="https://www.buymeacoffee.com/rnewby3" target="_blank" rel="noopener" class="bmc-btn-link footer-bmc-btn">🍺 Buy me a beer</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
