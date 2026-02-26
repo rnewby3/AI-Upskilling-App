@@ -6919,6 +6919,702 @@ window.addEventListener("popstate", (e) => {
   }
 });
 
+// ─── AI MATURITY ASSESSMENT ──────────────────────────────────
+const assessmentQuestions = [
+  {
+    id: "policy",
+    category: "Governance",
+    icon: "📋",
+    question: "Does your organisation have a published AI use policy?",
+    subtxt: "Covers approved tools, prohibited uses, and employee responsibilities.",
+    options: [
+      { text: "No policy exists — AI use is entirely unmanaged", score: 1 },
+      { text: "A draft exists but hasn't been published or communicated", score: 2 },
+      { text: "A policy has been published and shared with all staff", score: 3 },
+      { text: "The policy is enforced and reviewed at least quarterly", score: 4 },
+      { text: "Policy compliance is automatically enforced via tooling or DLP controls", score: 5 },
+    ],
+  },
+  {
+    id: "inventory",
+    category: "Tool Oversight",
+    icon: "🗂️",
+    question: "How well does your organisation track AI tools in use?",
+    subtxt: "Including both IT-approved tools and tools employees may be using informally.",
+    options: [
+      { text: "We have no inventory — we don't know what tools are being used", score: 1 },
+      { text: "We have a partial list based largely on what IT is aware of", score: 2 },
+      { text: "We have a full approved catalogue with data classification guidance", score: 3 },
+      { text: "We have a catalogue that is actively reviewed every quarter", score: 4 },
+      { text: "All AI tool usage is monitored in real-time via a SaaS management platform", score: 5 },
+    ],
+  },
+  {
+    id: "shadow",
+    category: "Risk Visibility",
+    icon: "👁️",
+    question: "How visible is 'shadow AI' — employees using personal or unapproved AI accounts?",
+    subtxt: "e.g. free-tier ChatGPT, personal Claude accounts, unapproved browser extensions.",
+    options: [
+      { text: "No visibility — we suspect it happens but have no data at all", score: 1 },
+      { text: "Anecdotally known, but no formal discovery has been done", score: 2 },
+      { text: "We've run a discovery exercise and have a reasonable picture", score: 3 },
+      { text: "Active monitoring via DLP or endpoint controls is in place", score: 4 },
+      { text: "Fully blocked or redirected to approved tools via technical controls", score: 5 },
+    ],
+  },
+  {
+    id: "adoption",
+    category: "Measurement",
+    icon: "📊",
+    question: "How do you measure AI tool adoption across the organisation?",
+    subtxt: "\"Adoption\" means knowing who is using what, how often, and to what effect.",
+    options: [
+      { text: "We don't measure AI adoption at all", score: 1 },
+      { text: "We rely on manager feedback and informal reports", score: 2 },
+      { text: "We track monthly active users per approved tool", score: 3 },
+      { text: "We track usage frequency and estimated time-saved figures", score: 4 },
+      { text: "We measure ROI at the workflow level with documented financial impact", score: 5 },
+    ],
+  },
+  {
+    id: "exec",
+    category: "Executive Engagement",
+    icon: "🏛️",
+    question: "What is your executive team's engagement with AI strategy?",
+    subtxt: "Think about whether AI is on leadership's agenda and who owns it.",
+    options: [
+      { text: "AI is not a regular topic at exec or leadership level", score: 1 },
+      { text: "One exec champion exists but there's no formal structure", score: 2 },
+      { text: "AI features in a regular structured review (monthly or quarterly)", score: 3 },
+      { text: "The CAIO or equivalent presents AI strategy at exec level", score: 4 },
+      { text: "AI KPIs are in board reporting and the exec team is AI-fluent", score: 5 },
+    ],
+  },
+  {
+    id: "champions",
+    category: "Enablement",
+    icon: "🏆",
+    question: "Do you have an AI champions network across business units?",
+    subtxt: "Champions are designated people in each team who support peer adoption.",
+    options: [
+      { text: "No — AI adoption is entirely organic with no coordination", score: 1 },
+      { text: "Enthusiastic individuals exist, but there's no formal network", score: 2 },
+      { text: "Champions are identified and a formal programme is being launched", score: 3 },
+      { text: "An active champion network runs with regular touchpoints and resources", score: 4 },
+      { text: "Champions operate as internal AI consultants and run training for peers", score: 5 },
+    ],
+  },
+  {
+    id: "training",
+    category: "Learning & Development",
+    icon: "🎓",
+    question: "What AI training is available to employees?",
+    subtxt: "Consider the breadth, consistency, and accessibility of structured training.",
+    options: [
+      { text: "None — employees figure it out entirely on their own", score: 1 },
+      { text: "Ad hoc tips and informal sharing, no structured programme", score: 2 },
+      { text: "Role-based onboarding exists for approved tools", score: 3 },
+      { text: "Structured learning paths are integrated into the L&D programme", score: 4 },
+      { text: "Continuous AI learning with certifications, assessments, and specialisations", score: 5 },
+    ],
+  },
+  {
+    id: "dataclass",
+    category: "Data Governance",
+    icon: "🏷️",
+    question: "How does your organisation apply data classification to AI use?",
+    subtxt: "e.g. defining which data types may be entered into which AI tools.",
+    options: [
+      { text: "No data classification framework exists in any context", score: 1 },
+      { text: "A framework exists for IT use but isn't applied to AI tools", score: 2 },
+      { text: "Staff know which data can go into which tools based on classification", score: 3 },
+      { text: "Automated controls restrict certain data types from AI inputs", score: 4 },
+      { text: "Dynamic classification with real-time enforcement and full audit trails", score: 5 },
+    ],
+  },
+  {
+    id: "usecases",
+    category: "Value Delivery",
+    icon: "💡",
+    question: "How many AI use cases does your org have with a measured business impact?",
+    subtxt: "\"Measured\" means documented time, cost, or risk reduction — not estimated.",
+    options: [
+      { text: "None — AI is experimental or used in an informal, untracked way", score: 1 },
+      { text: "1–2 use cases with anecdotal or estimated impact only", score: 2 },
+      { text: "2–3 use cases with documented productivity or cost savings", score: 3 },
+      { text: "4+ use cases tracked, with results used in planning decisions", score: 4 },
+      { text: "AI ROI is embedded in business case processes across all business units", score: 5 },
+    ],
+  },
+  {
+    id: "vendor",
+    category: "Vendor Management",
+    icon: "🤝",
+    question: "How does your organisation evaluate and approve new AI tools or vendors?",
+    subtxt: "Think about who gets consulted and what criteria must be met before approval.",
+    options: [
+      { text: "Anyone can sign up and start using AI tools — there's no gate", score: 1 },
+      { text: "IT or security are consulted informally, sometimes", score: 2 },
+      { text: "An approval process exists, including a basic security and DPA review", score: 3 },
+      { text: "A formal, scored vendor review process with documented risk ratings", score: 4 },
+      { text: "Repeatable vendor governance integrated into procurement and legal workflows", score: 5 },
+    ],
+  },
+  {
+    id: "risk",
+    category: "Security",
+    icon: "🛡️",
+    question: "How does your organisation monitor AI-related security risks?",
+    subtxt: "e.g. data exfiltration via AI tools, prompt injection, model provider incidents.",
+    options: [
+      { text: "No monitoring in place whatsoever", score: 1 },
+      { text: "Reactive only — we investigate incidents when reported", score: 2 },
+      { text: "A defined AI incident response process exists", score: 3 },
+      { text: "Proactive monitoring via SIEM or DLP integrations is active", score: 4 },
+      { text: "Continuous automated alerting with AI risk in security dashboards", score: 5 },
+    ],
+  },
+  {
+    id: "budget",
+    category: "Investment",
+    icon: "💰",
+    question: "How is AI investment managed in your organisation?",
+    subtxt: "Think about visibility, ownership, and accountability for AI spend.",
+    options: [
+      { text: "Costs are absorbed into general software budgets, effectively untracked", score: 1 },
+      { text: "AI spend is loosely tracked but not a formal budget line", score: 2 },
+      { text: "AI spend is identifiable and reviewed periodically", score: 3 },
+      { text: "AI has a dedicated budget line item in annual planning", score: 4 },
+      { text: "AI investment is tied to business KPIs and reviewed at board level", score: 5 },
+    ],
+  },
+  {
+    id: "cadence",
+    category: "Governance Cadence",
+    icon: "📅",
+    question: "What governance cadence exists for reviewing AI across the organisation?",
+    subtxt: "Regular reviews keep policy current and surface risks before they become incidents.",
+    options: [
+      { text: "No regular AI reviews take place at all", score: 1 },
+      { text: "Occasional ad hoc discussions when something prompts them", score: 2 },
+      { text: "A regular monthly or quarterly AI review meeting is established", score: 3 },
+      { text: "Monthly AI reviews plus quarterly tool audits, with exec attendance", score: 4 },
+      { text: "Board-level AI reporting; AI integrated into the annual strategy cycle", score: 5 },
+    ],
+  },
+  {
+    id: "capability",
+    category: "Technical Capability",
+    icon: "⚙️",
+    question: "What is the most advanced AI capability your organisation is actively using?",
+    subtxt: "Select the highest level representing consistent, embedded use — not one-off pilots.",
+    options: [
+      { text: "Consumer AI tools only (e.g. free-tier ChatGPT, personal accounts)", score: 1 },
+      { text: "Enterprise licensed AI tools (e.g. Microsoft Copilot, Google Workspace AI)", score: 2 },
+      { text: "Custom AI workflows built on internal data (e.g. RAG chatbots, Copilot Studio)", score: 3 },
+      { text: "Agentic AI automating multi-step business workflows", score: 4 },
+      { text: "Fine-tuned proprietary models or AI embedded in customer-facing products", score: 5 },
+    ],
+  },
+  {
+    id: "leadership",
+    category: "AI Leadership",
+    icon: "⭐",
+    question: "How is AI leadership formalised in your organisation?",
+    subtxt: "Considers authority, budget ownership, and the remit of the AI function.",
+    options: [
+      { text: "No dedicated AI leadership role exists", score: 1 },
+      { text: "An AI champion exists but has no formal authority or budget", score: 2 },
+      { text: "A CAIO or equivalent role exists with a defined scope and remit", score: 3 },
+      { text: "The CAIO has budget authority and sits in the exec leadership team", score: 4 },
+      { text: "The CAIO is a public-facing thought leader and contributes to industry AI standards", score: 5 },
+    ],
+  },
+];
+
+const MATURITY_LEVELS = [
+  {
+    level: 1,
+    name: "Ad Hoc",
+    tagline: "Shadow AI is everywhere. No governance, policy, or visibility.",
+    colour: "#64748b",
+    bg: "#f1f5f9",
+    description: "Your organisation is in the earliest stage of AI adoption. Individuals are exploring AI tools independently — mostly on personal or free-tier accounts — but there's no structure, policy, or oversight in place. The risk here isn't that employees are using AI; it's that the organisation has no visibility into what data is leaving the building or how its intellectual property is being handled. This is addressable quickly.",
+    target: 3,
+    roadmap: [
+      {
+        title: "Immediate (0–4 weeks): Get visible",
+        items: [
+          "Run a quick survey to understand which AI tools employees are actually using today",
+          "Identify 3–5 internal AI enthusiasts who can become your first champions",
+          "Get one exec sponsor — ideally CEO or COO — to endorse AI as a strategic priority",
+          "Document the single biggest data risk you can identify (e.g. confidential documents entered into free ChatGPT)",
+        ],
+      },
+      {
+        title: "Short-term (1–3 months): Build the foundation",
+        items: [
+          "Draft and publish a minimal AI use policy: approved tools, prohibited uses, reporting process — keep it to 2 pages",
+          "License an enterprise AI tool with a proper DPA (Microsoft Copilot, Google Workspace AI, or equivalent)",
+          "Create a first-pass approved tool catalogue with basic data classification guidance",
+          "Set up a monthly AI review cadence — even a 30-minute call with 2–3 stakeholders is a meaningful start",
+        ],
+      },
+      {
+        title: "Reaching Level 3 (3–6 months): Governance in place",
+        items: [
+          "Communicate the AI policy to all staff with senior leadership endorsement",
+          "Begin tracking monthly active users for your licensed AI tool",
+          "Launch a BU champions programme — biweekly touchpoints, shared prompt library, and a feedback channel",
+          "Add role-based onboarding for approved tools to your L&D programme",
+          "Document your first AI use case with a quantifiable outcome (e.g. hours saved per week)",
+        ],
+      },
+    ],
+  },
+  {
+    level: 2,
+    name: "Aware",
+    tagline: "Enterprise tools are licensed but inconsistently used. One champion driving the agenda.",
+    colour: "#6366f1",
+    bg: "#e0e7ff",
+    description: "Your organisation has made a deliberate move into enterprise AI — tools are licensed and there's awareness of the need for governance. But adoption is patchy and policy is incomplete or unenforced. The gap between what leadership thinks is happening and what employees are actually doing tends to be widest at this level. You likely have one or two highly engaged individuals carrying disproportionate weight.",
+    target: 3,
+    roadmap: [
+      {
+        title: "Immediate (0–4 weeks): Close the policy gap",
+        items: [
+          "Prioritise publishing your AI use policy — a draft that isn't published protects no one",
+          "Get sign-off from Legal, CISO, and CEO before publishing; send with CEO endorsement",
+          "Add a quick-reference decision card alongside the full policy (Green / Amber / Red tool tiers)",
+          "Brief all managers so they can answer basic employee questions without escalating",
+        ],
+      },
+      {
+        title: "Short-term (1–2 months): Build measurement infrastructure",
+        items: [
+          "Set up adoption dashboards for your licensed tools (M365 Admin Center, Google Workspace Reports)",
+          "Run a data classification workshop to define which data is safe in which tools",
+          "Complete a tool inventory including shadow AI discovery via IT or DLP log review",
+          "Formalise your vendor approval process with a simple one-page scorecard",
+        ],
+      },
+      {
+        title: "Reaching Level 3 (2–4 months): Governance locked in",
+        items: [
+          "Stand up a formal BU champions programme with named leads in each function",
+          "Launch role-based AI onboarding for approved tools in your L&D system",
+          "Hold your first structured AI review meeting with exec attendance",
+          "Report monthly adoption metrics to the leadership team",
+          "Identify 1–2 use cases where you'll document a measured outcome this quarter",
+        ],
+      },
+    ],
+  },
+  {
+    level: 3,
+    name: "Governed",
+    tagline: "Policy in place, catalogue live, metrics tracked. Year 1 target reached.",
+    colour: "#4f46e5",
+    bg: "#ede9fe",
+    description: "You've reached the Year 1 target. Your organisation has the foundational governance infrastructure in place: a published policy, an approved tool catalogue, adoption metrics, and a regular review cadence. This is the level at which responsible AI adoption becomes sustainable. Now the focus shifts from building the floor to building upward — embedding AI into key workflows and demonstrating measurable business value.",
+    target: 4,
+    roadmap: [
+      {
+        title: "Maintain Level 3: Don't let governance degrade",
+        items: [
+          "Update the AI policy at least quarterly — new tools and risks emerge constantly",
+          "Review the approved tool catalogue at every monthly AI meeting",
+          "Keep reporting adoption metrics — the moment you stop measuring, adoption stalls",
+          "Actively support your champions with resources and recognition; they burn out without it",
+        ],
+      },
+      {
+        title: "Moving toward Level 4 (3–6 months): Prove ROI",
+        items: [
+          "Select 2–3 use cases where you'll formally measure productivity or cost impact",
+          "Build a simple ROI template: baseline time spent → time with AI → delta",
+          "Begin integrating AI risk monitoring into your existing SIEM or security tooling",
+          "Start the process of adding AI as a line item in the next annual budget cycle",
+        ],
+      },
+      {
+        title: "Reaching Level 4 (6–12 months): Strategic embedding",
+        items: [
+          "Present measured AI ROI to the exec team and board — data beats anecdote",
+          "Get AI confirmed as a named budget line item in annual financial planning",
+          "Build a repeatable, documented vendor review process used consistently across IT",
+          "CAIO to present AI strategy to board at least once this year",
+          "Set up continuous risk monitoring with automated alerting integrated into your SOC",
+        ],
+      },
+    ],
+  },
+  {
+    level: 4,
+    name: "Optimised",
+    tagline: "AI embedded in key workflows. ROI measured. CAIO at the executive table.",
+    colour: "#312e81",
+    bg: "#e0e7ff",
+    description: "Your organisation is operating at an advanced level of AI maturity. AI is embedded in key workflows, its value is being measured, and governance is mature and self-sustaining. The CAIO is a recognised executive function with budget authority and strategic influence. The next transition — to Level 5 — requires moving from AI as an enablement function to AI as a core business capability that shapes competitive position.",
+    target: 5,
+    roadmap: [
+      {
+        title: "Consolidate Level 4: Ensure sustainability",
+        items: [
+          "Embed AI ROI reporting into regular business performance reviews so it doesn't depend on the CAIO",
+          "Automate vendor review and compliance monitoring wherever possible",
+          "Transition champions from adoption facilitators to internal AI capability leaders",
+          "Ensure the CAIO role has a clear succession plan and isn't a single point of failure",
+        ],
+      },
+      {
+        title: "Moving toward Level 5 (6–12 months): Strategic differentiation",
+        items: [
+          "Identify one AI capability that could be a genuine competitive differentiator for the business",
+          "Explore fine-tuning or RAG architectures on proprietary data for a high-value internal use case",
+          "Begin integrating AI into your product strategy or customer-facing experience",
+          "Build feedback loops between AI tool usage data and capability improvement priorities",
+        ],
+      },
+      {
+        title: "Reaching Level 5 (12–24 months): Transformative capability",
+        items: [
+          "Deploy at least one AI capability in a customer-facing product or service",
+          "Contribute to an external AI standards body, industry working group, or published framework",
+          "Establish an AI CoE that operates as an internal consultancy across the whole organisation",
+          "CAIO to become a public-facing voice for the organisation on enterprise AI",
+          "Develop proprietary AI assets tied directly to core business differentiation",
+        ],
+      },
+    ],
+  },
+  {
+    level: 5,
+    name: "Transformative",
+    tagline: "AI is a core business capability. Your organisation shapes industry AI practice.",
+    colour: "#1e1b4b",
+    bg: "#ede9fe",
+    description: "You are operating at the frontier of enterprise AI maturity. AI is not just an efficiency tool — it's a core business capability embedded in products, services, and competitive strategy. Your organisation contributes to the broader AI ecosystem, and the CAIO is a public-facing thought leader. At this level the focus is on sustaining differentiation, managing increasingly complex AI risks, and staying ahead of regulatory and technical shifts.",
+    target: null,
+    roadmap: [
+      {
+        title: "Sustain and protect your differentiation",
+        items: [
+          "Continuously invest in the AI capabilities driving your competitive advantage",
+          "Build robust risk management for your most advanced use cases (fine-tuned models, agentic AI)",
+          "Ensure feedback loops between production AI usage and capability improvement are active and measured",
+          "Maintain strong relationships with AI model providers to stay ahead of the capability curve",
+        ],
+      },
+      {
+        title: "Shape the external landscape",
+        items: [
+          "Actively contribute to AI standards bodies or industry consortia",
+          "Publish thought leadership — case studies, frameworks, public commentary on AI policy",
+          "Engage with regulators proactively; don't wait for compliance obligations to force the conversation",
+          "Invest in the broader AI talent pipeline through hiring, university partnerships, or open-source contributions",
+        ],
+      },
+      {
+        title: "Future-proof the organisation",
+        items: [
+          "Build AI literacy at board level — directors should be able to challenge AI strategy meaningfully",
+          "Ensure AI ethics and responsible AI practices are embedded in operations, not just documented in policy",
+          "Monitor geopolitical and regulatory shifts that could affect model availability or data sovereignty",
+          "Plan for the next generation of AI capabilities — agentic, multimodal, and increasingly autonomous systems",
+        ],
+      },
+    ],
+  },
+];
+
+// ─── ASSESSMENT STATE & STORAGE ──────────────────────────────
+const ASSESS_STORAGE_KEY = "caio-maturity-assessment";
+let assessState = { started: false, currentQ: 0, answers: {} };
+
+function saveAssessState() {
+  localStorage.setItem(ASSESS_STORAGE_KEY, JSON.stringify(assessState));
+}
+function loadAssessState() {
+  try {
+    const saved = localStorage.getItem(ASSESS_STORAGE_KEY);
+    if (saved) assessState = JSON.parse(saved);
+  } catch (e) { /* ignore */ }
+}
+
+function calcMaturityLevel(answers) {
+  const scores = Object.values(answers);
+  if (!scores.length) return 1;
+  const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+  if (avg >= 4.5) return 5;
+  if (avg >= 3.5) return 4;
+  if (avg >= 2.5) return 3;
+  if (avg >= 1.5) return 2;
+  return 1;
+}
+
+// ─── ASSESSMENT RENDER: INTRO ─────────────────────────────────
+function renderAssessIntro() {
+  const answered = Object.keys(assessState.answers).length;
+  const total = assessmentQuestions.length;
+  const completed = answered === total;
+  const partial = answered > 0 && !completed;
+
+  const view = document.getElementById("view-maturity-assessment");
+  view.innerHTML = `
+    <div class="assessment-intro">
+      <p class="eyebrow">CAIO Skills Tool</p>
+      <h2>AI Maturity Assessment</h2>
+      <p>Answer 15 questions about your organisation's current AI posture. You'll receive a maturity level, a score breakdown across 15 dimensions, and a detailed road map of next steps tailored to where you are now.</p>
+      <div class="assessment-intro-meta">
+        <span>⏱ <strong>~5 minutes</strong></span>
+        <span>❓ <strong>15 questions</strong></span>
+        <span>🎯 <strong>5 maturity levels</strong></span>
+        <span>🗺️ <strong>Personalised roadmap</strong></span>
+      </div>
+      <p style="font-size:.875rem;color:var(--ink-3);margin-bottom:1.75rem">Answer based on where your organisation <em>consistently</em> operates today — not a best-case scenario or an active pilot.</p>
+      <div class="hero-cta" style="justify-content:center;gap:.75rem;flex-wrap:wrap">
+        ${completed ? `<button class="btn ghost" id="assess-view-results-btn">View Last Results</button>` : ""}
+        ${partial ? `<button class="btn ghost" id="assess-resume-btn">Resume (${answered}/${total})</button>` : ""}
+        <button class="btn primary" id="assess-start-btn">${partial ? "Start Over" : completed ? "Retake Assessment" : "Start Assessment"}</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("assess-start-btn")?.addEventListener("click", () => {
+    assessState = { started: true, currentQ: 0, answers: {} };
+    saveAssessState();
+    renderAssessQuizShell();
+    renderAssessCard(true);
+  });
+  document.getElementById("assess-resume-btn")?.addEventListener("click", () => {
+    renderAssessQuizShell();
+    renderAssessCard(true);
+  });
+  document.getElementById("assess-view-results-btn")?.addEventListener("click", () => {
+    renderAssessResults();
+  });
+}
+
+// ─── ASSESSMENT RENDER: QUIZ ──────────────────────────────────
+function renderAssessQuizShell() {
+  const view = document.getElementById("view-maturity-assessment");
+  view.innerHTML = `
+    <div class="assessment-quiz">
+      <div class="assess-progress-row">
+        <span class="assess-progress-label" id="assess-q-label"></span>
+        <div class="assess-progress-bar">
+          <div class="assess-progress-fill" id="assess-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="assessment-card-viewport" id="assess-card-viewport"></div>
+      <div class="assess-footer">
+        <button class="assess-back-btn" id="assess-back-btn">← Back</button>
+        <button class="assess-next-btn" id="assess-next-btn" disabled>Next →</button>
+      </div>
+    </div>
+  `;
+  wireAssessFooter();
+}
+
+function renderAssessCard(animateIn = false) {
+  const q = assessmentQuestions[assessState.currentQ];
+  const total = assessmentQuestions.length;
+  const progress = (assessState.currentQ / total) * 100;
+  const letters = ["A", "B", "C", "D", "E"];
+  const existingScore = assessState.answers[q.id];
+
+  // Update progress UI
+  const progressLabel = document.getElementById("assess-q-label");
+  const progressFill  = document.getElementById("assess-progress-fill");
+  const nextBtn       = document.getElementById("assess-next-btn");
+  const backBtn       = document.getElementById("assess-back-btn");
+  if (progressLabel) progressLabel.textContent = `Question ${assessState.currentQ + 1} of ${total}`;
+  if (progressFill)  progressFill.style.width = `${progress}%`;
+  if (backBtn) backBtn.style.visibility = assessState.currentQ === 0 ? "hidden" : "visible";
+  if (nextBtn) {
+    nextBtn.textContent = assessState.currentQ === total - 1 ? "See My Results →" : "Next →";
+    nextBtn.disabled = existingScore === undefined;
+  }
+
+  const cardHTML = `
+    <div class="assessment-card${animateIn ? " slide-in-from-right" : ""}" id="assess-card-current">
+      <div class="assess-card-header">
+        <div class="assess-card-icon">${q.icon}</div>
+        <div style="flex:1;min-width:0">
+          <span class="assess-card-category">${q.category}</span>
+          <h3 class="assess-card-question">${q.question}</h3>
+          ${q.subtxt ? `<p class="assess-card-subtext">${q.subtxt}</p>` : ""}
+        </div>
+      </div>
+      <div class="assess-options">
+        ${q.options.map((opt, i) => `
+          <button class="assess-option${existingScore === opt.score ? " selected" : ""}" data-score="${opt.score}" type="button">
+            <span class="option-bullet"><span class="option-letter">${letters[i]}</span></span>
+            <span class="option-text">${opt.text}</span>
+          </button>
+        `).join("")}
+      </div>
+    </div>
+  `;
+
+  const viewport = document.getElementById("assess-card-viewport");
+  if (viewport) {
+    viewport.innerHTML = cardHTML;
+    viewport.querySelectorAll(".assess-option").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        viewport.querySelectorAll(".assess-option").forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected", "tick-bounce");
+        btn.addEventListener("animationend", () => btn.classList.remove("tick-bounce"), { once: true });
+        assessState.answers[q.id] = parseInt(btn.dataset.score, 10);
+        saveAssessState();
+        if (nextBtn) nextBtn.disabled = false;
+      });
+    });
+  }
+}
+
+function wireAssessFooter() {
+  const total = assessmentQuestions.length;
+
+  document.getElementById("assess-next-btn")?.addEventListener("click", () => {
+    if (assessState.currentQ < total - 1) {
+      const card = document.getElementById("assess-card-current");
+      if (card) {
+        card.classList.add("slide-out-to-left");
+        card.addEventListener("animationend", () => {
+          assessState.currentQ++;
+          saveAssessState();
+          renderAssessCard(true);
+        }, { once: true });
+      }
+    } else {
+      renderAssessResults();
+    }
+  });
+
+  document.getElementById("assess-back-btn")?.addEventListener("click", () => {
+    if (assessState.currentQ > 0) {
+      assessState.currentQ--;
+      saveAssessState();
+      renderAssessCard(true);
+    }
+  });
+}
+
+// ─── ASSESSMENT RENDER: RESULTS ───────────────────────────────
+function renderAssessResults() {
+  const answers = assessState.answers;
+  const level = calcMaturityLevel(answers);
+  const ld = MATURITY_LEVELS[level - 1];
+  const totalScore = Object.values(answers).reduce((a, b) => a + b, 0);
+  const maxScore = assessmentQuestions.length * 5;
+  const scorePct = Math.round((totalScore / maxScore) * 100);
+
+  const dimBreakdown = assessmentQuestions.map((q) => {
+    const score = answers[q.id] ?? 0;
+    const pct = (score / 5) * 100;
+    const col = score >= 4 ? "#22c55e" : score >= 3 ? "#4f46e5" : score >= 2 ? "#f59e0b" : "#ef4444";
+    return `
+      <div class="assess-dim-chip">
+        <span class="assess-dim-chip-name">${q.category}</span>
+        <div class="assess-dim-chip-bar"><div class="assess-dim-chip-fill" style="width:${pct}%;background:${col}"></div></div>
+        <span class="assess-dim-chip-score">${score}/5</span>
+      </div>
+    `;
+  }).join("");
+
+  const roadmapTitle = ld.target
+    ? `Road map: Level ${level} → Level ${ld.target}`
+    : "Sustaining Your Level 5 Advantage";
+
+  const roadmapHTML = ld.roadmap.map((phase, i) => `
+    <div class="assess-roadmap-phase">
+      <div class="assess-phase-header" data-phase="${i}">
+        <div class="assess-phase-dot" style="background:${ld.colour}"></div>
+        <span class="assess-phase-title">${phase.title}</span>
+        <span class="assess-phase-toggle${i === 0 ? " open" : ""}">▾</span>
+      </div>
+      <div class="assess-phase-body${i === 0 ? " open" : ""}">
+        <ul>${phase.items.map((item) => `<li>${item}</li>`).join("")}</ul>
+      </div>
+    </div>
+  `).join("");
+
+  const view = document.getElementById("view-maturity-assessment");
+  view.innerHTML = `
+    <div class="assessment-results">
+      <div class="assess-results-hero">
+        <div class="assess-level-badge" style="background:${ld.bg};color:${ld.colour}">Level ${level}</div>
+        <div class="assess-level-name" style="color:${ld.colour}">${ld.name}</div>
+        <p class="assess-level-tagline">${ld.tagline}</p>
+        <div class="assess-score-row">
+          <span class="assess-score-label">Overall score</span>
+          <div class="assess-score-bar">
+            <div class="assess-score-fill" id="assess-score-fill-anim" style="width:0%;background:${ld.colour}"></div>
+          </div>
+          <span class="assess-score-num">${totalScore}/${maxScore} &nbsp;·&nbsp; ${scorePct}%</span>
+        </div>
+        <p class="assess-level-description">${ld.description}</p>
+        <div class="assess-cta-row">
+          ${level < 5 ? `<button class="btn primary" data-goto="curriculum">Explore Full Curriculum →</button>` : ""}
+          <button class="btn ghost" id="assess-retake-btn">Retake Assessment</button>
+        </div>
+      </div>
+
+      <div class="assess-breakdown">
+        <h3>Your Score by Dimension</h3>
+        <div class="assess-dim-grid">${dimBreakdown}</div>
+      </div>
+
+      <div class="assess-roadmap">
+        <h3>${roadmapTitle}</h3>
+        ${roadmapHTML}
+      </div>
+    </div>
+  `;
+
+  // Animate score bar in after paint
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      const fill = document.getElementById("assess-score-fill-anim");
+      if (fill) fill.style.width = `${scorePct}%`;
+    }, 80);
+  });
+
+  // Roadmap accordion toggles
+  view.querySelectorAll(".assess-phase-header").forEach((header) => {
+    header.addEventListener("click", () => {
+      const body = header.nextElementSibling;
+      const toggle = header.querySelector(".assess-phase-toggle");
+      const isOpen = body.classList.contains("open");
+      body.classList.toggle("open", !isOpen);
+      toggle.classList.toggle("open", !isOpen);
+    });
+  });
+
+  // Wire action buttons
+  document.getElementById("assess-retake-btn")?.addEventListener("click", () => {
+    assessState = { started: false, currentQ: 0, answers: {} };
+    saveAssessState();
+    renderAssessIntro();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+  view.querySelectorAll("[data-goto]").forEach((btn) => {
+    btn.addEventListener("click", () => showView(btn.dataset.goto));
+  });
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ─── ASSESSMENT INIT ──────────────────────────────────────────
+function initAssessment() {
+  loadAssessState();
+  renderAssessIntro();
+}
+
 // ─── INIT ─────────────────────────────────────────────────────
 function init() {
   initTheme();
@@ -6932,6 +7628,7 @@ function init() {
   wireDataActions();
   wireMetrics();
   updateStats();
+  initAssessment();
   // Completion modal close
   document.getElementById("completion-close")?.addEventListener("click", () => {
     document.getElementById("completion-modal")?.classList.add("hidden");

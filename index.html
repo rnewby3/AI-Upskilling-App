@@ -77,6 +77,7 @@
       <button class="nav-btn" data-view="curriculum">Curriculum</button>
       <button class="nav-btn" data-view="radar">AI Radar</button>
       <button class="nav-btn" data-view="resources">Resources</button>
+      <button class="nav-btn" data-view="maturity-assessment">Assessment</button>
       <button class="nav-btn" data-view="data">Data</button>
     </div>
     <div class="nav-right">
@@ -96,6 +97,7 @@
         <div class="hero-cta">
           <button class="btn primary" data-goto="curriculum">Start Learning</button>
           <button class="btn ghost" data-goto="radar">View AI Radar</button>
+          <button class="btn ghost" data-goto="maturity-assessment">Take Maturity Assessment</button>
         </div>
       </div>
       <div class="hero-stats">
@@ -313,6 +315,11 @@
       </div>
     </article>
   </template>
+
+  <!-- ── AI MATURITY ASSESSMENT ── -->
+  <div id="view-maturity-assessment" class="view hidden">
+    <!-- Rendered entirely by JS: renderAssessIntro() → renderAssessQuiz() → renderAssessResults() -->
+  </div>
 
   <!-- ── COMPLETION MODAL ── -->
   <div id="completion-modal" class="completion-overlay hidden">
