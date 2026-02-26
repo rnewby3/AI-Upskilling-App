@@ -24,3 +24,8 @@ Then open `http://localhost:8080`.
 
 ## Deployment
 This is static and can be deployed to any static host (GitHub Pages, Netlify, Vercel static, or your own domain `caioskills.app`).
+
+
+## Ideas for features
+- Ability to share maturity assessment (share button)
+- Adding the number of hearts onto the buy me a coffee button
