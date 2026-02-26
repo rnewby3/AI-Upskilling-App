@@ -29,3 +29,4 @@ This is static and can be deployed to any static host (GitHub Pages, Netlify, Ve
 ## Ideas for features
 - Ability to share maturity assessment (share button)
 - Adding the number of hearts onto the buy me a coffee button
+- Ability to export assessment page as a PDF
