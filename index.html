@@ -141,6 +141,10 @@
 
   <!-- ── CURRICULUM ── -->
   <div id="view-curriculum" class="view hidden">
+    <div class="detail-back-bar">
+      <button class="btn ghost detail-back-btn" id="curriculum-back-btn">← Home</button>
+      <span class="detail-breadcrumb"><button class="breadcrumb-home" data-goto="home">Home</button> › Curriculum</span>
+    </div>
     <section class="page-header">
       <div>
         <h2>Curriculum</h2>
@@ -162,6 +166,10 @@
 
   <!-- ── AI RADAR ── -->
   <div id="view-radar" class="view hidden">
+    <div class="detail-back-bar">
+      <button class="btn ghost detail-back-btn" id="radar-back-btn">← Home</button>
+      <span class="detail-breadcrumb"><button class="breadcrumb-home" data-goto="home">Home</button> › AI Radar</span>
+    </div>
     <section class="page-header">
       <div>
         <h2>AI Radar</h2>
@@ -200,6 +208,10 @@
 
   <!-- ── RESOURCES ── -->
   <div id="view-resources" class="view hidden">
+    <div class="detail-back-bar">
+      <button class="btn ghost detail-back-btn" id="resources-back-btn">← Home</button>
+      <span class="detail-breadcrumb"><button class="breadcrumb-home" data-goto="home">Home</button> › Resources</span>
+    </div>
     <section class="page-header">
       <div>
         <h2>Resources</h2>
@@ -318,7 +330,11 @@
 
   <!-- ── AI MATURITY ASSESSMENT ── -->
   <div id="view-maturity-assessment" class="view hidden">
-    <!-- Rendered entirely by JS: renderAssessIntro() → renderAssessQuiz() → renderAssessResults() -->
+    <div class="detail-back-bar">
+      <button class="btn ghost detail-back-btn" id="assess-back-home-btn">← Home</button>
+      <span class="detail-breadcrumb"><button class="breadcrumb-home" data-goto="home">Home</button> › AI Maturity Assessment</span>
+    </div>
+    <div id="assess-content"></div>
   </div>
 
   <!-- ── COMPLETION MODAL ── -->
@@ -346,7 +362,7 @@
         <span>Built for practitioners stepping into enterprise AI leadership.</span>
       </div>
       <div class="footer-bmc">
-        <span class="footer-bmc-msg">This site is 100% ad-free &mdash; if it's been useful, consider buying me a beer!</span>
+        <span class="footer-bmc-msg">This site is 100% ad-free &mdash; if it's been<br>useful, consider buying me a beer!</span>
         <a href="https://www.buymeacoffee.com/rnewby3" target="_blank" rel="noopener" class="bmc-btn-link footer-bmc-btn">🍺 Buy me a beer</a>
       </div>
     </div>
