@@ -512,6 +512,9 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
 [data-theme="dark"] [data-type="Article"]      { background: #0a2018; color: #34d399; }
 [data-theme="dark"] [data-type="Book"]         { background: #1e1b4b; color: #818cf8; }
 
+/* Back button hidden on desktop for top-level views; breadcrumb stays visible */
+#radar-back-btn, #assess-back-home-btn, #curriculum-back-btn, #resources-back-btn { display: none; }
+
 /* ─── RESPONSIVE ─────────────────────────────────────────── */
 @media (max-width: 900px) {
   .hero { grid-template-columns: 1fr; }
@@ -573,8 +576,6 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
   font: inherit; font-size: .82rem; color: var(--brand); text-decoration: none;
 }
 .breadcrumb-home:hover { text-decoration: underline; }
-/* Back button hidden on desktop for top-level views; breadcrumb stays visible */
-#radar-back-btn, #assess-back-home-btn, #curriculum-back-btn, #resources-back-btn { display: none; }
 
 /* Article wrapper */
 .module-detail-article { max-width: 860px; }
