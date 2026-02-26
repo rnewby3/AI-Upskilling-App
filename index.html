@@ -1,9 +1,64 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CAIO Skills — Chief AI Officer Training</title>
+
+  <!-- SEO -->
+  <meta name="description" content="The complete training platform for Chief AI Officers. Structured curriculum covering AI strategy, governance, security, adoption, and executive leadership — built for enterprise AI practitioners." />
+  <meta name="keywords" content="Chief AI Officer, CAIO, AI training, AI strategy, AI governance, AI security, enterprise AI, AI leadership, AI upskilling, AI adoption" />
+  <meta name="author" content="Richard Newby" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.caioskills.app" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="CAIO Skills — Chief AI Officer Training" />
+  <meta property="og:description" content="The complete training platform for Chief AI Officers. Structured curriculum covering AI strategy, governance, security, adoption, and executive leadership." />
+  <meta property="og:url" content="https://www.caioskills.app" />
+  <meta property="og:site_name" content="CAIO Skills" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="CAIO Skills — Chief AI Officer Training" />
+  <meta name="twitter:description" content="The complete training platform for Chief AI Officers. Structured curriculum covering AI strategy, governance, security, adoption, and executive leadership." />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "CAIO Skills",
+        "url": "https://www.caioskills.app",
+        "description": "The complete training platform for Chief AI Officers.",
+        "author": {
+          "@type": "Person",
+          "name": "Richard Newby"
+        }
+      },
+      {
+        "@type": "Course",
+        "name": "Chief AI Officer (CAIO) Training",
+        "description": "A structured curriculum covering AI strategy, governance, security, adoption, and executive leadership for practitioners stepping into enterprise AI enablement.",
+        "url": "https://www.caioskills.app",
+        "provider": {
+          "@type": "Person",
+          "name": "Richard Newby"
+        },
+        "educationalLevel": "Advanced",
+        "inLanguage": "en",
+        "isAccessibleForFree": true
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -22,6 +77,7 @@
       <button class="nav-btn" data-view="curriculum">Curriculum</button>
       <button class="nav-btn" data-view="radar">AI Radar</button>
       <button class="nav-btn" data-view="resources">Resources</button>
+      <button class="nav-btn" data-view="maturity-assessment">Assessment</button>
       <button class="nav-btn" data-view="data">Data</button>
     </div>
     <div class="nav-right">
@@ -41,6 +97,7 @@
         <div class="hero-cta">
           <button class="btn primary" data-goto="curriculum">Start Learning</button>
           <button class="btn ghost" data-goto="radar">View AI Radar</button>
+          <button class="btn ghost" data-goto="maturity-assessment">Take Maturity Assessment</button>
         </div>
       </div>
       <div class="hero-stats">
@@ -76,7 +133,7 @@
       </div>
       <div class="home-pane">
         <h3>Why a CAIO?</h3>
-        <p class="body-text">AI adoption is accelerating faster than most organisations can safely govern it. The CAIO role exists at the intersection of <strong>strategy, security, and culture</strong> — ensuring the business captures AI value without creating technical debt, legal exposure, or eroding trust.</p>
+        <p class="body-text">AI adoption is accelerating faster than most organizations can safely govern it. The CAIO role exists at the intersection of <strong>strategy, security, and culture</strong> — ensuring the business captures AI value without creating technical debt, legal exposure, or eroding trust.</p>
         <p class="body-text">This site covers the complete CAIO skill set: from governing LLM vendors and protecting sensitive data, to running an executive AI rhythm and proving ROI to the board.</p>
       </div>
     </section>
@@ -84,6 +141,10 @@
 
   <!-- ── CURRICULUM ── -->
   <div id="view-curriculum" class="view hidden">
+    <div class="detail-back-bar">
+      <button class="btn ghost detail-back-btn" id="curriculum-back-btn">← Home</button>
+      <span class="detail-breadcrumb"><button class="breadcrumb-home" data-goto="home">Home</button> › Curriculum</span>
+    </div>
     <section class="page-header">
       <div>
         <h2>Curriculum</h2>
@@ -105,6 +166,10 @@
 
   <!-- ── AI RADAR ── -->
   <div id="view-radar" class="view hidden">
+    <div class="detail-back-bar">
+      <button class="btn ghost detail-back-btn" id="radar-back-btn">← Home</button>
+      <span class="detail-breadcrumb"><button class="breadcrumb-home" data-goto="home">Home</button> › AI Radar</span>
+    </div>
     <section class="page-header">
       <div>
         <h2>AI Radar</h2>
@@ -143,6 +208,10 @@
 
   <!-- ── RESOURCES ── -->
   <div id="view-resources" class="view hidden">
+    <div class="detail-back-bar">
+      <button class="btn ghost detail-back-btn" id="resources-back-btn">← Home</button>
+      <span class="detail-breadcrumb"><button class="breadcrumb-home" data-goto="home">Home</button> › Resources</span>
+    </div>
     <section class="page-header">
       <div>
         <h2>Resources</h2>
@@ -199,7 +268,7 @@
 
     <div class="metrics-section">
       <h3>Adoption Metrics</h3>
-      <p class="body-text muted">Track your organisation's AI adoption numbers here. These are saved with your snapshot.</p>
+      <p class="body-text muted">Track your organization's AI adoption numbers here. These are saved with your snapshot.</p>
       <div class="metric-grid">
         <label class="metric-label">
           AI Active Users (monthly)
@@ -259,6 +328,15 @@
     </article>
   </template>
 
+  <!-- ── AI MATURITY ASSESSMENT ── -->
+  <div id="view-maturity-assessment" class="view hidden">
+    <div class="detail-back-bar">
+      <button class="btn ghost detail-back-btn" id="assess-back-home-btn">← Home</button>
+      <span class="detail-breadcrumb"><button class="breadcrumb-home" data-goto="home">Home</button> › AI Maturity Assessment</span>
+    </div>
+    <div id="assess-content"></div>
+  </div>
+
   <!-- ── COMPLETION MODAL ── -->
   <div id="completion-modal" class="completion-overlay hidden">
     <div class="completion-card">
@@ -283,7 +361,7 @@
         <span>Built for practitioners stepping into enterprise AI leadership.</span>
       </div>
       <div class="footer-bmc">
-        <span class="footer-bmc-msg">This site is 100% ad-free &mdash; if it's been useful, consider buying me a beer!</span>
+        <span class="footer-bmc-msg">This site is 100% ad-free &mdash; if it's been<br>useful, consider buying me a beer!</span>
         <a href="https://www.buymeacoffee.com/rnewby3" target="_blank" rel="noopener" class="bmc-btn-link footer-bmc-btn">🍺 Buy me a beer</a>
       </div>
     </div>
