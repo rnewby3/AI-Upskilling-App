@@ -7642,9 +7642,8 @@ function formatDays(d) {
 }
 
 function daysBadgeClass(d) {
-  if (d > 14) return 'calc-days-green';
-  if (d > 7) return 'calc-days-yellow';
-  if (d > 3) return 'calc-days-orange';
+  if (d >= 30) return 'calc-days-green';
+  if (d >= 15) return 'calc-days-yellow';
   return 'calc-days-red';
 }
 
@@ -7762,7 +7761,7 @@ function initCalculator() {
       const daysOfBudget = exchangesOnBudget / dailyPrompts;
       const badgeClass = daysBadgeClass(daysOfBudget);
 
-      if (daysOfBudget < 5) warnings.push({ name, days: daysOfBudget, color, budget, dailyPrompts });
+      if (daysOfBudget < 30) warnings.push({ name, days: daysOfBudget, color, budget, dailyPrompts });
 
       return `
         <div class="calc-result-card">
