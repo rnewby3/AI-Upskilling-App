@@ -479,7 +479,7 @@
       <button class="mg-vendor-chip active" data-vendor="claude" style="--vendor-color:#CC785C">
         <span class="mg-vendor-dot"></span>Claude
       </button>
-      <button class="mg-vendor-chip" data-vendor="openai" style="--vendor-color:#111">
+      <button class="mg-vendor-chip" data-vendor="openai" style="--vendor-color:#10a37f">
         <span class="mg-vendor-dot"></span>OpenAI
       </button>
       <button class="mg-vendor-chip" data-vendor="google" style="--vendor-color:#4285F4">
@@ -487,113 +487,42 @@
       </button>
     </div>
 
-    <!-- Sections 1 + 3: Two-column top area -->
-    <div class="mg-top-grid">
-
-      <!-- Left: Recommender -->
-      <div class="mg-top-col">
-        <div class="mg-section-title">What should I use?</div>
-        <div class="mg-chip-groups">
-          <div class="mg-chip-group">
-            <div class="mg-section-title" style="font-size:.78rem;color:var(--ink-3);margin:0 0 .3rem">Task type</div>
-            <div class="mg-chips">
-              <button class="mg-chip mg-task-chip active" data-task="summarize">Summarize</button>
-              <button class="mg-chip mg-task-chip" data-task="write">Write / Draft</button>
-              <button class="mg-chip mg-task-chip" data-task="analyze">Analyze</button>
-              <button class="mg-chip mg-task-chip" data-task="reason">Complex Reasoning</button>
-              <button class="mg-chip mg-task-chip" data-task="code">Code</button>
-              <button class="mg-chip mg-task-chip" data-task="chat">Chat / Q&amp;A</button>
+    <!-- Section 1: Recommender -->
+    <div class="mg-section">
+      <div class="mg-rec-grid">
+        <div class="mg-rec-controls">
+          <div class="mg-section-title">What should I use?</div>
+          <div class="mg-chip-groups">
+            <div class="mg-chip-group">
+              <div class="mg-chip-group-label">Task type</div>
+              <div class="mg-chips">
+                <button class="mg-chip mg-task-chip active" data-task="summarize">Summarize</button>
+                <button class="mg-chip mg-task-chip" data-task="write">Write / Draft</button>
+                <button class="mg-chip mg-task-chip" data-task="analyze">Analyze</button>
+                <button class="mg-chip mg-task-chip" data-task="reason">Complex Reasoning</button>
+                <button class="mg-chip mg-task-chip" data-task="code">Code</button>
+                <button class="mg-chip mg-task-chip" data-task="chat">Chat / Q&amp;A</button>
+              </div>
             </div>
-          </div>
-          <div class="mg-chip-group">
-            <div class="mg-section-title" style="font-size:.78rem;color:var(--ink-3);margin:0 0 .3rem">Focus</div>
-            <div class="mg-chips">
-              <button class="mg-chip mg-focus-chip active" data-focus="speed">Speed</button>
-              <button class="mg-chip mg-focus-chip" data-focus="cost">Cost</button>
-              <button class="mg-chip mg-focus-chip" data-focus="quality">Quality</button>
-              <button class="mg-chip mg-focus-chip" data-focus="precision">Precision</button>
+            <div class="mg-chip-group">
+              <div class="mg-chip-group-label">What matters most</div>
+              <div class="mg-chips">
+                <button class="mg-chip mg-focus-chip active" data-focus="speed">Speed</button>
+                <button class="mg-chip mg-focus-chip" data-focus="cost">Cost</button>
+                <button class="mg-chip mg-focus-chip" data-focus="quality">Quality</button>
+                <button class="mg-chip mg-focus-chip" data-focus="precision">Precision</button>
+              </div>
             </div>
           </div>
         </div>
         <div id="mg-recommendation" class="mg-rec-wrap"></div>
       </div>
-
-      <!-- Right: Effort -->
-      <div class="mg-top-col">
-        <div class="mg-section-title">What does effort actually change?</div>
-        <div class="mg-effort-grid">
-
-          <div class="mg-effort-card" data-vendor="claude">
-            <div class="mg-effort-vendor">Claude</div>
-            <div class="mg-effort-system">effort parameter</div>
-            <div class="mg-effort-levels">
-              <div class="mg-effort-level">
-                <div class="mg-effort-level-name">Low</div>
-                <div class="mg-effort-level-desc">Skips thinking for simple tasks. Fastest and cheapest.</div>
-              </div>
-              <div class="mg-effort-level">
-                <div class="mg-effort-level-name">Medium</div>
-                <div class="mg-effort-level-desc">Moderate reasoning pass. Good balance of speed and depth.</div>
-              </div>
-              <div class="mg-effort-level">
-                <div class="mg-effort-level-name">High</div>
-                <div class="mg-effort-level-desc">Default for Sonnet 4.6. Almost always triggers a thinking pass.</div>
-              </div>
-              <div class="mg-effort-level">
-                <div class="mg-effort-level-name">Max</div>
-                <div class="mg-effort-level-desc">Full reasoning budget. Slowest and most expensive. Reserve for the hardest tasks.</div>
-              </div>
-            </div>
-            <div class="mg-effort-note">When to use: High/Max for math, logic, complex reasoning. Low/Medium for writing and summarization.</div>
-          </div>
-
-          <div class="mg-effort-card" data-vendor="openai">
-            <div class="mg-effort-vendor">OpenAI</div>
-            <div class="mg-effort-system">Reasoning Effort (o-series)</div>
-            <div class="mg-effort-levels">
-              <div class="mg-effort-level">
-                <div class="mg-effort-level-name">Low</div>
-                <div class="mg-effort-level-desc">Minimal reasoning pass. Faster, cheaper.</div>
-              </div>
-              <div class="mg-effort-level">
-                <div class="mg-effort-level-name">Medium</div>
-                <div class="mg-effort-level-desc">Balanced reasoning. Default for most tasks.</div>
-              </div>
-              <div class="mg-effort-level">
-                <div class="mg-effort-level-name">High</div>
-                <div class="mg-effort-level-desc">Full reasoning budget. Slowest and most expensive.</div>
-              </div>
-            </div>
-            <div class="mg-effort-note">GPT-5.5 "Thinking" is a separate model (billed at $30/$180/1M), not a setting.</div>
-          </div>
-
-          <div class="mg-effort-card" data-vendor="google">
-            <div class="mg-effort-vendor">Google</div>
-            <div class="mg-effort-system">thinking_level</div>
-            <div class="mg-effort-levels">
-              <div class="mg-effort-level">
-                <div class="mg-effort-level-name">Off</div>
-                <div class="mg-effort-level-desc">No thinking. Standard speed.</div>
-              </div>
-              <div class="mg-effort-level">
-                <div class="mg-effort-level-name">Low / Medium / High</div>
-                <div class="mg-effort-level-desc">Increasing reasoning depth. All billed as output tokens.</div>
-              </div>
-            </div>
-            <div class="mg-effort-note">Gemini 3 Thinking is a separate model optimized for deep reasoning.</div>
-          </div>
-
-        </div>
-        <div class="mg-myth-buster">
-          <strong>Effort ≠ better writing.</strong> Higher thinking levels help with reasoning, math, and multi-step logic. For writing, summarizing, Q&amp;A, or formatting — they produce over-engineered responses and always cost more tokens. Use default effort levels for 90% of tasks.
-        </div>
-      </div>
-
-    </div><!-- /mg-top-grid -->
+    </div>
 
     <!-- Section 2: Tier breakdown -->
     <div class="mg-section">
       <div class="mg-section-title">What does each tier actually do?</div>
+      <p class="mg-section-sub">Every provider ships the same shape of lineup — and just as important, knowing when <em>not</em> to reach for each tier.</p>
       <div class="mg-tier-grid">
 
         <div class="mg-tier-card" style="border-top-color:#CC785C">
@@ -658,6 +587,22 @@
           <div class="mg-tier-vendor-models" data-vendor="google">Gemini 3 Flash-Lite</div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- Section 3: Interactive effort explainer -->
+    <div class="mg-section">
+      <div class="mg-effort-header">
+        <span class="mg-effort-param-tag" id="mg-effort-param-tag">effort</span>
+        <div class="mg-section-title" style="margin:0">What does effort actually change?</div>
+      </div>
+      <p class="mg-section-sub" id="mg-effort-blurb"></p>
+      <div class="mg-myth-buster">
+        <strong>Effort ≠ better writing.</strong> Higher thinking levels help with reasoning, math, and multi-step logic. For writing, summarizing, Q&amp;A, or formatting — they produce over-engineered responses and always cost more tokens. Use default effort levels for 90% of tasks.
+      </div>
+      <div class="mg-effort-interactive">
+        <div class="mg-effort-btns" id="mg-effort-btns"></div>
+        <aside class="mg-epanel" id="mg-epanel"></aside>
       </div>
     </div>
 

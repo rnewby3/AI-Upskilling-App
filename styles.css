@@ -2520,3 +2520,321 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
   .mg-tier-grid { grid-template-columns: 1fr; }
   .mg-top-grid { grid-template-columns: 1fr; }
 }
+
+/* ─── MODEL GUIDE: recommender grid ─────────────────────── */
+.mg-rec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.mg-rec-controls {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.mg-chip-group-label {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+  margin-bottom: .3rem;
+}
+
+.mg-section-sub {
+  font-size: .88rem;
+  color: var(--ink-2);
+  margin: -.4rem 0 1rem;
+  line-height: 1.55;
+}
+
+/* suggested effort chip in rec card */
+.mg-rec-effort-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .5rem;
+  padding: .4rem .75rem;
+  border: 1px solid;
+  border-radius: var(--radius-sm);
+  margin: .3rem 0 .5rem;
+}
+
+.mg-rec-effort-label {
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+}
+
+.mg-rec-effort-val {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: .88rem;
+}
+
+/* ─── MODEL GUIDE: interactive effort section ────────────── */
+.mg-effort-header {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: .5rem;
+}
+
+.mg-effort-param-tag {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  font-family: "IBM Plex Mono", "Courier New", monospace;
+  color: var(--brand);
+  background: var(--brand-bg);
+  border: 1px solid rgba(79,70,229,.25);
+  padding: .2rem .6rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: color .2s, background .2s;
+}
+
+.mg-effort-interactive {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+/* Clickable level cards */
+.mg-effort-btns {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.mg-effort-btn {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  text-align: left;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: .85rem 1rem;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+  width: 100%;
+}
+
+.mg-effort-btn:hover {
+  border-color: var(--brand);
+}
+
+.mg-effort-btn.active {
+  border-color: var(--brand);
+  background: var(--brand-bg);
+  box-shadow: inset 0 0 0 1px rgba(79,70,229,.15);
+}
+
+.mg-effort-btn-main {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+  flex: 1;
+}
+
+.mg-effort-btn-name {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--ink);
+}
+
+.mg-effort-btn.active .mg-effort-btn-name {
+  color: var(--brand);
+}
+
+.mg-effort-btn-desc {
+  font-size: .8rem;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+
+.mg-effort-btn-default {
+  font-size: .68rem;
+  color: var(--ink-3);
+  white-space: nowrap;
+  font-family: "IBM Plex Mono", "Courier New", monospace;
+}
+
+.mg-effort-btn-chev {
+  font-family: "IBM Plex Mono", "Courier New", monospace;
+  color: var(--ink-3);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity .15s, transform .15s, color .15s;
+}
+
+.mg-effort-btn.active .mg-effort-btn-chev {
+  opacity: 1;
+  transform: none;
+  color: var(--brand);
+}
+
+/* Right panel */
+.mg-epanel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  position: sticky;
+  top: 72px;
+}
+
+.mg-epanel-inner {
+  padding: 1.4rem 1.5rem 1.25rem;
+}
+
+.mg-epanel-head {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: .75rem;
+}
+
+.mg-epanel-param {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  font-family: "IBM Plex Mono", "Courier New", monospace;
+  padding: .2rem .6rem;
+  border-radius: 999px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.mg-epanel-level {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -.02em;
+}
+
+.mg-epanel-desc {
+  font-size: .88rem;
+  color: var(--ink-2);
+  margin: 0 0 1.1rem;
+  line-height: 1.5;
+}
+
+.mg-epanel-meters {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  margin-bottom: 1.1rem;
+}
+
+.mg-meter-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: .3rem;
+}
+
+.mg-meter-label {
+  font-size: .78rem;
+  color: var(--ink-2);
+}
+
+.mg-meter-num {
+  font-family: "IBM Plex Mono", "Courier New", monospace;
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.mg-meter-track {
+  height: 6px;
+  background: var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.mg-meter-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width .5s cubic-bezier(.2,.7,.2,1);
+}
+
+.mg-epanel-rows {
+  border-top: 1px solid var(--line);
+  padding-top: .9rem;
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+}
+
+.mg-epanel-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: .75rem;
+  align-items: baseline;
+}
+
+.mg-epanel-row-key {
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+}
+
+.mg-epanel-row-val {
+  font-size: .85rem;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+/* dark mode for new effort elements */
+[data-theme="dark"] .mg-effort-btn {
+  background: var(--surface);
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .mg-effort-btn.active {
+  background: rgba(99,102,241,.12);
+  border-color: rgba(99,102,241,.5);
+}
+
+[data-theme="dark"] .mg-effort-btn.active .mg-effort-btn-name {
+  color: #818cf8;
+}
+
+[data-theme="dark"] .mg-effort-btn.active .mg-effort-btn-chev {
+  color: #818cf8;
+}
+
+[data-theme="dark"] .mg-epanel {
+  background: var(--surface);
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .mg-effort-param-tag {
+  color: #818cf8;
+  background: rgba(99,102,241,.12);
+  border-color: rgba(99,102,241,.3);
+}
+
+[data-theme="dark"] .mg-meter-track {
+  background: rgba(255,255,255,.08);
+}
+
+/* responsive */
+@media (max-width: 840px) {
+  .mg-rec-grid { grid-template-columns: 1fr; }
+  .mg-effort-interactive { grid-template-columns: 1fr; }
+  .mg-epanel { position: static; }
+}

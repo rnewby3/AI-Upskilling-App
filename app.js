@@ -7615,6 +7615,46 @@ function renderAssessResults() {
 }
 
 // ─── MODEL GUIDE ──────────────────────────────────────────────
+
+const MG_EFFORT_DATA = {
+  claude: {
+    param: 'effort',
+    blurb: 'Claude exposes a discrete effort dial. Higher effort spends more of the model\'s reasoning budget before it answers.',
+    levels: [
+      { id: 'low',    name: 'Low',    desc: 'Skips thinking for simple tasks. Fastest and cheapest.',                      speed: 95, cost: 10, depth: 15,  defaultFor: 'Haiku 4.5',   when: 'Summaries, formatting, classification, chat.' },
+      { id: 'medium', name: 'Medium', desc: 'Moderate reasoning pass. A good balance of speed and depth.',                speed: 70, cost: 38, depth: 50,  defaultFor: null,          when: 'Drafting, editing, everyday analysis.' },
+      { id: 'high',   name: 'High',   desc: 'Almost always triggers a full thinking pass before answering.',              speed: 45, cost: 64, depth: 82,  defaultFor: 'Sonnet 4.6',  when: 'Hard code, multi-step logic, careful analysis.' },
+      { id: 'max',    name: 'Max',    desc: 'Full reasoning budget. Slowest and most expensive — reserve it.',            speed: 20, cost: 96, depth: 100, defaultFor: 'Opus 4.7',    when: 'Frontier math, proofs, the hardest reasoning.' },
+    ],
+  },
+  openai: {
+    param: 'reasoning_effort',
+    blurb: 'OpenAI\'s reasoning models take a reasoning_effort hint. Minimal answers almost instantly; high spends many hidden reasoning tokens first.',
+    levels: [
+      { id: 'minimal', name: 'Minimal', desc: 'Barely reasons. Near-instant, lowest token cost.',                        speed: 97, cost: 8,  depth: 10,  defaultFor: 'GPT-5.2',     when: 'Extraction, routing, deterministic formatting.' },
+      { id: 'low',     name: 'Low',     desc: 'A light reasoning pass for routine work.',                                speed: 74, cost: 30, depth: 42,  defaultFor: null,          when: 'Drafting, summaries, simple analysis.' },
+      { id: 'medium',  name: 'Medium',  desc: 'Balanced default. Reasons enough for most real tasks.',                  speed: 52, cost: 58, depth: 72,  defaultFor: 'GPT-5.4',     when: 'Code, planning, multi-step analysis.' },
+      { id: 'high',    name: 'High',    desc: 'Maximum hidden reasoning. Slowest and priciest.',                        speed: 24, cost: 94, depth: 100, defaultFor: 'GPT-5.5',     when: 'Hard math, agents, deep research.' },
+    ],
+  },
+  google: {
+    param: 'thinking_budget',
+    blurb: 'Gemini uses a token-based thinking budget rather than fixed steps. Off disables thinking; Dynamic lets the model choose how much to spend.',
+    levels: [
+      { id: 'off',      name: 'Off',      desc: 'Zero thinking tokens. Lowest latency and cost.',                      speed: 98, cost: 5,  depth: 8,   defaultFor: 'Gemini 3 Flash-Lite', when: 'Classification, chat, high-volume calls.' },
+      { id: 'dynamic',  name: 'Dynamic',  desc: 'Model decides its own budget per request. Sensible default.',         speed: 66, cost: 40, depth: 60,  defaultFor: 'Gemini 3 Flash',      when: 'Mixed workloads where difficulty varies.' },
+      { id: 'standard', name: 'Standard', desc: 'A fixed mid-size budget for consistent depth.',                       speed: 48, cost: 62, depth: 78,  defaultFor: null,                  when: 'Analysis, code, structured reasoning.' },
+      { id: 'deep',     name: 'Deep',     desc: 'Maximum budget. Best reasoning, highest cost.',                       speed: 22, cost: 95, depth: 100, defaultFor: 'Gemini 3.1 Pro',      when: 'Hard reasoning, long-horizon planning.' },
+    ],
+  },
+};
+
+const MG_REC_EFFORT = {
+  claude:  { fast: 'low',     balanced: 'medium',  flagship: 'high' },
+  openai:  { fast: 'minimal', balanced: 'medium',  flagship: 'high' },
+  google:  { fast: 'off',     balanced: 'dynamic', flagship: 'deep' },
+};
+
 const MG_RECS = {
   'summarize-speed':     { tier:'fast',     headline:'Fast is all you need', reason:'Summarization is pattern-matching, not reasoning. Fast models do it well and respond 3–5× quicker.', examples:['Pull key points from a meeting transcript','Get the gist of a long email chain','One-paragraph recap of a news article'] },
   'summarize-cost':      { tier:'fast',     headline:'Fast keeps costs minimal', reason:"Don't overpay for summarization. Fast tier handles it with zero meaningful quality drop.", examples:['Batch-process 50 status reports overnight','Summarize 100 customer feedback responses','Convert raw meeting notes to bullet summaries at volume'] },
@@ -7663,16 +7703,119 @@ function initModelGuide() {
   }
 
   function applyVendorFilter(vendor) {
-    // Show/hide effort cards
-    document.querySelectorAll('.mg-effort-card[data-vendor]').forEach(card => {
-      card.style.display = card.dataset.vendor === vendor ? '' : 'none';
-    });
     // Show/hide tier vendor model rows
     document.querySelectorAll('.mg-tier-vendor-models[data-vendor]').forEach(el => {
       el.style.display = el.dataset.vendor === vendor ? '' : 'none';
     });
-    // Re-run rec to refresh model tag
+    // Re-render interactive effort section for this vendor
+    renderEffortSection(vendor);
+    // Re-run rec to refresh model tag + effort chip
     updateRec();
+  }
+
+  // ── Interactive effort section ──
+  let mgEffortActiveId = null;
+
+  function renderEffortSection(vendor) {
+    const data = MG_EFFORT_DATA[vendor];
+    if (!data) return;
+
+    // Update header
+    const paramTag = document.getElementById('mg-effort-param-tag');
+    const blurbEl = document.getElementById('mg-effort-blurb');
+    if (paramTag) paramTag.textContent = data.param;
+    if (blurbEl) blurbEl.textContent = data.blurb;
+
+    // Pick initial active level (first level by default, or keep if same id exists)
+    const ids = data.levels.map(l => l.id);
+    if (!mgEffortActiveId || !ids.includes(mgEffortActiveId)) {
+      mgEffortActiveId = data.levels[0].id;
+    }
+
+    renderEffortButtons(data, vendor);
+    renderEffortPanel(data, vendor);
+  }
+
+  function renderEffortButtons(data, vendor) {
+    const container = document.getElementById('mg-effort-btns');
+    if (!container) return;
+    container.innerHTML = data.levels.map(l => `
+      <button class="mg-effort-btn${l.id === mgEffortActiveId ? ' active' : ''}"
+              data-level="${l.id}" data-vendor="${vendor}">
+        <div class="mg-effort-btn-main">
+          <span class="mg-effort-btn-name">${l.name}</span>
+          <span class="mg-effort-btn-desc">${l.desc}</span>
+        </div>
+        ${l.defaultFor ? `<span class="mg-effort-btn-default">default · ${l.defaultFor}</span>` : ''}
+        <span class="mg-effort-btn-chev" aria-hidden="true">→</span>
+      </button>
+    `).join('');
+
+    container.querySelectorAll('.mg-effort-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        mgEffortActiveId = btn.dataset.level;
+        renderEffortButtons(data, vendor);
+        renderEffortPanel(data, vendor);
+      });
+    });
+  }
+
+  function renderEffortPanel(data, vendor) {
+    const panel = document.getElementById('mg-epanel');
+    if (!panel) return;
+    const level = data.levels.find(l => l.id === mgEffortActiveId) || data.levels[0];
+    const vendorColors = {
+      claude: '#CC785C',
+      openai: '#10a37f',
+      google: '#4285F4',
+    };
+    const color = vendorColors[vendor] || 'var(--brand)';
+
+    panel.innerHTML = `
+      <div class="mg-epanel-inner">
+        <div class="mg-epanel-head">
+          <span class="mg-epanel-param" style="color:${color};background:${color}18;border-color:${color}40">${data.param}</span>
+          <h3 class="mg-epanel-level">${level.name}</h3>
+        </div>
+        <p class="mg-epanel-desc">${level.desc}</p>
+        <div class="mg-epanel-meters">
+          ${renderMeter('Response speed', level.speed, color)}
+          ${renderMeter('Reasoning depth', level.depth, color)}
+          ${renderMeter('Relative cost', level.cost, color)}
+        </div>
+        <div class="mg-epanel-rows">
+          <div class="mg-epanel-row">
+            <span class="mg-epanel-row-key">Default for</span>
+            <span class="mg-epanel-row-val">${level.defaultFor || '—'}</span>
+          </div>
+          <div class="mg-epanel-row">
+            <span class="mg-epanel-row-key">Use it for</span>
+            <span class="mg-epanel-row-val">${level.when}</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Animate meter fills after paint
+    requestAnimationFrame(() => {
+      panel.querySelectorAll('.mg-meter-fill[data-val]').forEach(fill => {
+        fill.style.width = fill.dataset.val + '%';
+      });
+    });
+  }
+
+  function renderMeter(label, value, color) {
+    return `
+      <div class="mg-meter">
+        <div class="mg-meter-top">
+          <span class="mg-meter-label">${label}</span>
+          <span class="mg-meter-num">${value}</span>
+        </div>
+        <div class="mg-meter-track">
+          <div class="mg-meter-fill" data-val="${value}" style="width:0%;background:${color}"></div>
+        </div>
+      </div>
+    `;
   }
 
   document.querySelectorAll('.mg-vendor-chip').forEach(chip => {
@@ -7693,13 +7836,22 @@ function initModelGuide() {
     const color = MG_TIER_COLORS[rec.tier] || '#666';
     const vendor = getActiveVendor();
     const modelName = VENDOR_TIER_MODEL[vendor]?.[rec.tier] || '';
-    const modelTag = modelName ? `<span class="mg-rec-model-tag">→ ${modelName}</span>` : '';
+    const modelTag = modelName ? `<span class="mg-rec-model-tag">${modelName}</span>` : '';
+    const effortId = MG_REC_EFFORT[vendor]?.[rec.tier];
+    const effortData = MG_EFFORT_DATA[vendor];
+    const effortLevel = effortData?.levels.find(l => l.id === effortId);
+    const effortHtml = effortLevel
+      ? `<div class="mg-rec-effort-chip" style="background:${color}15;border-color:${color}40">
+           <span class="mg-rec-effort-label">Suggested ${effortData.param}</span>
+           <span class="mg-rec-effort-val" style="color:${color}">${effortLevel.name}</span>
+         </div>`
+      : '';
     const examplesHtml = rec.examples && rec.examples.length
       ? `<div class="mg-rec-section-label">Good for</div><ul class="mg-rec-examples">${rec.examples.map(e => `<li>${e}</li>`).join('')}</ul>`
       : '';
     const skipItems = MG_TIER_SKIP[rec.tier] || [];
     const skipHtml = skipItems.length
-      ? `<div class="mg-rec-section-label mg-rec-skip-label">Skip when</div><ul class="mg-rec-skip">${skipItems.map(s => `<li>${s}</li>`).join('')}</ul>`
+      ? `<div class="mg-rec-section-label">Skip when</div><ul class="mg-rec-skip">${skipItems.map(s => `<li>${s}</li>`).join('')}</ul>`
       : '';
     div.innerHTML = `
       <div class="mg-rec-card" style="border-left-color:${color}">
@@ -7709,6 +7861,7 @@ function initModelGuide() {
         </div>
         <div class="mg-rec-headline">${rec.headline}</div>
         <div class="mg-rec-reason">${rec.reason}</div>
+        ${effortHtml}
         ${examplesHtml}
         ${skipHtml}
       </div>`;
@@ -7730,8 +7883,9 @@ function initModelGuide() {
     });
   });
 
-  // Apply initial vendor filter state
+  // Apply initial state
   applyVendorFilter(getActiveVendor());
+  updateRec();
 }
 
 // ─── ASSESSMENT INIT ──────────────────────────────────────────
