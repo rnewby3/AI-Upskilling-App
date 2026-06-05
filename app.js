@@ -7730,36 +7730,28 @@ function initCalculator() {
     })();
 
     const enabledChips = [...document.querySelectorAll('.calc-chip.active')];
-
-    if (enabledChips.length === 0) {
-      resultsDiv.innerHTML = `<div class="calc-results-empty">Select models above to compare costs</div>`;
-      return;
-    }
-
     const hasTokens = inputTokens > 0;
     const warnings = [];
-    const cards = enabledChips.map(chip => {
+
+    function renderCard(chip) {
       const name = chip.querySelector('.calc-chip-name')?.textContent || chip.textContent.split('$')[0].trim();
       const inputRate = parseFloat(chip.dataset.input) || 0;
       const outputRate = parseFloat(chip.dataset.output) || 0;
       const color = chip.style.getPropertyValue('--chip-color') || '#4f46e5';
-
-      const inputCostStr = '$' + (inputRate / 1000).toFixed(inputRate < 1 ? 5 : 4) + '/1K';
-      const outputCostStr = '$' + (outputRate / 1000).toFixed(outputRate < 1 ? 5 : 4) + '/1K';
+      const rateStr = `$${inputRate}/$${outputRate} per 1M`;
 
       if (!hasTokens) {
         return `
           <div class="calc-result-card">
-            <div class="calc-result-left">
-              <div class="calc-vendor-dot" style="background:${color}"></div>
-              <div class="calc-result-name">${name}</div>
+            <div class="calc-result-card-top">
+              <div class="calc-result-left">
+                <div class="calc-vendor-dot" style="background:${color}"></div>
+                <div class="calc-result-name">${name}</div>
+              </div>
+              <div class="calc-result-cost">—</div>
             </div>
-            <div class="calc-result-rates">${inputCostStr} in &nbsp;·&nbsp; ${outputCostStr} out</div>
-            <hr class="calc-result-divider">
-            <div class="calc-result-cost">—</div>
-            <div class="calc-result-per">per exchange</div>
-            <div class="calc-result-footer">
-              <span class="calc-result-exchanges">—</span>
+            <div class="calc-result-card-bot">
+              <span class="calc-result-rates">${rateStr}</span>
               <span class="calc-days-badge">—</span>
             </div>
           </div>`;
@@ -7770,26 +7762,39 @@ function initCalculator() {
       const daysOfBudget = exchangesOnBudget / dailyPrompts;
       const badgeClass = daysBadgeClass(daysOfBudget);
 
-      if (daysOfBudget < 5) {
-        warnings.push({ name, days: daysOfBudget, color, budget, dailyPrompts });
-      }
+      if (daysOfBudget < 5) warnings.push({ name, days: daysOfBudget, color, budget, dailyPrompts });
 
       return `
         <div class="calc-result-card">
-          <div class="calc-result-left">
-            <div class="calc-vendor-dot" style="background:${color}"></div>
-            <div class="calc-result-name">${name}</div>
+          <div class="calc-result-card-top">
+            <div class="calc-result-left">
+              <div class="calc-vendor-dot" style="background:${color}"></div>
+              <div class="calc-result-name">${name}</div>
+            </div>
+            <div class="calc-result-cost">${formatCost(costPerExchange)}</div>
           </div>
-          <div class="calc-result-rates">${inputCostStr} in &nbsp;·&nbsp; ${outputCostStr} out</div>
-          <hr class="calc-result-divider">
-          <div class="calc-result-cost">${formatCost(costPerExchange)}</div>
-          <div class="calc-result-per">per exchange</div>
-          <div class="calc-result-footer">
-            <span class="calc-result-exchanges">${Math.floor(exchangesOnBudget).toLocaleString()} exchanges</span>
-            <span class="calc-days-badge ${badgeClass}">${formatDays(daysOfBudget)} days</span>
+          <div class="calc-result-card-bot">
+            <span class="calc-result-rates">${rateStr}</span>
+            <span class="calc-days-badge ${badgeClass}">${Math.floor(exchangesOnBudget).toLocaleString()} exch · ${formatDays(daysOfBudget)}d</span>
           </div>
         </div>`;
-    }).join('');
+    }
+
+    const tiers = { flagship: [], balanced: [], fast: [] };
+    enabledChips.forEach(chip => {
+      const t = chip.dataset.tier || 'balanced';
+      if (tiers[t]) tiers[t].push(chip);
+    });
+
+    function renderTierCol(chips, label) {
+      const cards = chips.map(renderCard).join('');
+      const emptyState = `<div class="calc-tier-empty">No ${label.toLowerCase()} models selected</div>`;
+      return `
+        <div class="calc-tier-col">
+          <div class="calc-tier-header">${label}</div>
+          <div class="calc-tier-cards">${chips.length ? cards : emptyState}</div>
+        </div>`;
+    }
 
     const warningsHtml = warnings.length ? `
       <div class="calc-warnings">
@@ -7808,7 +7813,13 @@ function initCalculator() {
         <div class="calc-results-title">Cost Comparison</div>
         <div class="calc-results-sub">${subText}</div>
       </div>
-      <div class="calc-result-cards">${cards}</div>
+      <div class="calc-tier-results">
+        ${renderTierCol(tiers.flagship, 'Flagship')}
+        <div class="calc-tier-divider"></div>
+        ${renderTierCol(tiers.balanced, 'Balanced')}
+        <div class="calc-tier-divider"></div>
+        ${renderTierCol(tiers.fast, 'Fast')}
+      </div>
       ${warningsHtml}`;
   }
 
