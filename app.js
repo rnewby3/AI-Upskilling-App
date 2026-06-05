@@ -7616,47 +7616,90 @@ function renderAssessResults() {
 
 // ─── MODEL GUIDE ──────────────────────────────────────────────
 const MG_RECS = {
-  'summarize-speed':     { tier:'fast',     headline:'Fast is all you need', reason:'Summarization is pattern-matching, not reasoning. Fast models do it well and respond 3–5× quicker.' },
-  'summarize-cost':      { tier:'fast',     headline:'Fast keeps costs minimal', reason:"Don't overpay for summarization. Fast tier handles it with zero meaningful quality drop." },
-  'summarize-quality':   { tier:'balanced', headline:'Balanced adds real nuance', reason:'Better coherence, more accurate synthesis of complex material. Worth the small cost bump.' },
-  'summarize-precision': { tier:'balanced', headline:'Balanced is your sweet spot', reason:'Precise summarization needs good reasoning — Balanced delivers without flagship pricing.' },
-  'write-speed':         { tier:'fast',     headline:'Fast for first drafts', reason:'Speed matters more than perfection on a first pass. Refine it yourself or in a follow-up.' },
-  'write-cost':          { tier:'fast',     headline:'Fast handles writing economically', reason:"Most writing tasks don't need deep reasoning. Fast tier produces solid drafts at a fraction of the cost." },
-  'write-quality':       { tier:'balanced', headline:'Balanced is the writing sweet spot', reason:'Stronger tone, better flow, more contextually aware. This is where Balanced clearly beats Fast.' },
-  'write-precision':     { tier:'balanced', headline:'Balanced nails tone and style', reason:"Flagship rarely improves writing over Balanced — you're paying for reasoning you don't need." },
-  'analyze-speed':       { tier:'balanced', headline:'Balanced minimum for analysis', reason:'Analysis needs reasoning. Fast models miss nuance and make logical errors on complex data.' },
-  'analyze-cost':        { tier:'balanced', headline:'Balanced is your floor here', reason:'Going Fast on analysis risks bad conclusions. Balanced is the cost-efficient right answer.' },
-  'analyze-quality':     { tier:'balanced', headline:'Balanced gets you 90% there', reason:"Most business analysis tasks don't need Flagship. Balanced handles structured data and logic well." },
-  'analyze-precision':   { tier:'flagship', headline:'Worth going Flagship', reason:'High-stakes analysis — financial modeling, risk assessment, complex multi-variable reasoning — is exactly what Flagship is built for.' },
-  'reason-speed':        { tier:'balanced', headline:"Don't go below Balanced", reason:'Reasoning tasks need actual reasoning. Fast models cut corners on logic chains — errors compound.' },
-  'reason-cost':         { tier:'balanced', headline:'Balanced is the minimum', reason:"You can't cheap out on reasoning. Balanced handles most logical tasks; upgrade to Flagship when stakes are high." },
-  'reason-quality':      { tier:'flagship', headline:'This is Flagship territory', reason:'Multi-step reasoning, complex problem decomposition, high-stakes decisions — Flagship earns its price here.' },
-  'reason-precision':    { tier:'flagship', headline:'Flagship, full stop', reason:'When precision in reasoning directly affects outcomes, Flagship + extended thinking is the right call.' },
-  'code-speed':          { tier:'balanced', headline:'Balanced handles most code', reason:'Code generation is structured reasoning. Balanced produces clean, functional code for most tasks.' },
-  'code-cost':           { tier:'balanced', headline:'Balanced is the sweet spot', reason:'Fast struggles with code logic. Balanced gives reliable output at reasonable cost.' },
-  'code-quality':        { tier:'balanced', headline:'Balanced for most code', reason:"Unless you're doing complex system architecture or debugging tricky logic, Balanced is more than enough." },
-  'code-precision':      { tier:'flagship', headline:'Go Flagship for complex code', reason:"Architecture decisions, debugging intricate systems, security analysis — Flagship's reasoning depth pays off here." },
-  'chat-speed':          { tier:'fast',     headline:'Fast is perfect for chat', reason:'Chat is conversational and high-volume. Fast models respond quickly and handle Q&A cleanly.' },
-  'chat-cost':           { tier:'fast',     headline:'Fast, no question', reason:"Don't burn budget on chat. Fast tier handles it at a fraction of the cost — this is its best use case." },
-  'chat-quality':        { tier:'balanced', headline:'Balanced for smarter replies', reason:'When chat quality matters — nuanced context, complex questions — Balanced is worth it.' },
-  'chat-precision':      { tier:'balanced', headline:'Balanced handles precise Q&A', reason:'For accurate, well-reasoned answers to specific questions, Balanced covers it without flagship pricing.' },
+  'summarize-speed':     { tier:'fast',     headline:'Fast is all you need', reason:'Summarization is pattern-matching, not reasoning. Fast models do it well and respond 3–5× quicker.', examples:['Pull key points from a meeting transcript','Get the gist of a long email chain','One-paragraph recap of a news article'] },
+  'summarize-cost':      { tier:'fast',     headline:'Fast keeps costs minimal', reason:"Don't overpay for summarization. Fast tier handles it with zero meaningful quality drop.", examples:['Batch-process 50 status reports overnight','Summarize 100 customer feedback responses','Convert raw meeting notes to bullet summaries at volume'] },
+  'summarize-quality':   { tier:'balanced', headline:'Balanced adds real nuance', reason:'Better coherence, more accurate synthesis of complex material. Worth the small cost bump.', examples:['Synthesize three competing analyst reports into a unified brief','Compress a 30-page contract into key obligations','Create an executive summary from quarterly financial data'] },
+  'summarize-precision': { tier:'balanced', headline:'Balanced is your sweet spot', reason:'Precise summarization needs good reasoning — Balanced delivers without flagship pricing.', examples:['Summarize a regulatory filing with no missed obligations','Create a board-ready brief from technical incident reports','Distill a 200-page RFP into a precise scope summary'] },
+  'write-speed':         { tier:'fast',     headline:'Fast for first drafts', reason:'Speed matters more than perfection on a first pass. Refine it yourself or in a follow-up.', examples:['Draft a quick Slack update on project status','Rough out a meeting agenda from bullet points','Write a fast internal announcement'] },
+  'write-cost':          { tier:'fast',     headline:'Fast handles writing economically', reason:"Most writing tasks don't need deep reasoning. Fast tier produces solid drafts at a fraction of the cost.", examples:['Generate 20 LinkedIn post drafts for review','Batch-produce first drafts of standard SOPs','Write template email responses for common requests'] },
+  'write-quality':       { tier:'balanced', headline:'Balanced is the writing sweet spot', reason:'Stronger tone, better flow, more contextually aware. This is where Balanced clearly beats Fast.', examples:['Write an executive summary with the right tone and nuance','Draft a polished client-facing proposal','Craft a board update that lands with non-technical stakeholders'] },
+  'write-precision':     { tier:'balanced', headline:'Balanced nails tone and style', reason:"Flagship rarely improves writing over Balanced — you're paying for reasoning you don't need.", examples:['Draft AI usage guidelines with precise, unambiguous language','Write compliance policy language that must be legally defensible','Create a RACI matrix explanation for a new governance framework'] },
+  'analyze-speed':       { tier:'balanced', headline:'Balanced minimum for analysis', reason:'Analysis needs reasoning. Fast models miss nuance and make logical errors on complex data.', examples:['Quick gut-check on a vendor pricing proposal','Flag outliers in a data table','Scan a resume for key qualifications'] },
+  'analyze-cost':        { tier:'balanced', headline:'Balanced is your floor here', reason:'Going Fast on analysis risks bad conclusions. Balanced is the cost-efficient right answer.', examples:['Run initial analysis on 50 survey responses','Categorize support tickets by theme','Score 100 vendor submissions against basic criteria'] },
+  'analyze-quality':     { tier:'balanced', headline:'Balanced gets you 90% there', reason:"Most business analysis tasks don't need Flagship. Balanced handles structured data and logic well.", examples:['Analyze 6 months of project data to find adoption blockers','Compare three vendor architectures against your security requirements','Break down a P&L and surface the 3 biggest risk areas'] },
+  'analyze-precision':   { tier:'flagship', headline:'Worth going Flagship', reason:'High-stakes analysis — financial modeling, risk assessment, complex multi-variable reasoning — is exactly what Flagship is built for.', examples:['Model ROI scenarios for a $2M AI investment with sensitivity analysis','Conduct legal risk analysis across five contract scenarios','Map regulatory exposure across a new AI deployment'] },
+  'reason-speed':        { tier:'balanced', headline:"Don't go below Balanced", reason:'Reasoning tasks need actual reasoning. Fast models cut corners on logic chains — errors compound.', examples:['Walk through a basic if/then decision tree','Evaluate two options with clear tradeoffs','Draft a quick pros/cons list for a tooling decision'] },
+  'reason-cost':         { tier:'balanced', headline:'Balanced is the minimum', reason:"You can't cheap out on reasoning. Balanced handles most logical tasks; upgrade to Flagship when stakes are high.", examples:['Step through a standard change management workflow','Reason through a vendor selection with 3 weighted criteria','Analyze a straightforward escalation scenario'] },
+  'reason-quality':      { tier:'flagship', headline:'This is Flagship territory', reason:'Multi-step reasoning, complex problem decomposition, high-stakes decisions — Flagship earns its price here.', examples:['Design a multi-step AI governance framework for a new tool category','Reason through an organizational restructuring with competing priorities','Build the logic for a tiered AI access model'] },
+  'reason-precision':    { tier:'flagship', headline:'Flagship, full stop', reason:'When precision in reasoning directly affects outcomes, Flagship is the right call.', examples:['Audit an AI policy for legal and operational gaps','Decompose a complex system failure to root causes','Evaluate a vendor security architecture for specific compliance gaps'] },
+  'code-speed':          { tier:'balanced', headline:'Balanced handles most code', reason:'Code generation is structured reasoning. Balanced produces clean, functional code for most tasks.', examples:['Write a Python script to rename 500 files','Build a quick regex to validate email formats','Generate a SQL query from a plain-English description'] },
+  'code-cost':           { tier:'balanced', headline:'Balanced is the sweet spot', reason:'Fast struggles with code logic. Balanced gives reliable output at reasonable cost.', examples:['Produce standard CRUD functions from a schema','Write unit tests for an existing module','Generate boilerplate for a REST API endpoint'] },
+  'code-quality':        { tier:'balanced', headline:'Balanced for most code', reason:"Unless you're doing complex system architecture or debugging tricky logic, Balanced is more than enough.", examples:['Build a Power Automate workflow that handles exception cases cleanly','Write reusable DAX measures with documentation','Generate a clean data transformation pipeline from raw specs'] },
+  'code-precision':      { tier:'flagship', headline:'Go Flagship for complex code', reason:"Architecture decisions, debugging intricate systems, security analysis — Flagship's reasoning depth pays off here.", examples:['Design a multi-tenant security architecture for an AI application','Debug an intermittent race condition in async code','Architect an event-driven system with clear failure boundaries'] },
+  'chat-speed':          { tier:'fast',     headline:'Fast is perfect for chat', reason:'Chat is conversational and high-volume. Fast models respond quickly and handle Q&A cleanly.', examples:['Answer "what does this acronym mean?"','Explain a concept in plain English on the fly','Quick back-and-forth to think through an idea'] },
+  'chat-cost':           { tier:'fast',     headline:'Fast, no question', reason:"Don't burn budget on chat. Fast tier handles it at a fraction of the cost — this is its best use case.", examples:['Power an employee FAQ chatbot at scale','Handle tier-1 IT help desk questions automatically','Answer common onboarding questions for new hires'] },
+  'chat-quality':        { tier:'balanced', headline:'Balanced for smarter replies', reason:'When chat quality matters — nuanced context, complex questions — Balanced is worth it.', examples:['Deep-dive conversation on AI governance strategy','Work through a complex stakeholder situation with nuance','Iterative dialogue on an evolving business problem'] },
+  'chat-precision':      { tier:'balanced', headline:'Balanced handles precise Q&A', reason:'For accurate, well-reasoned answers to specific questions, Balanced covers it without flagship pricing.', examples:['Answer precise technical questions about your AI architecture','Walk through exact compliance requirements for a specific use case','Provide accurate answers on regulatory topics'] },
 };
 
 const MG_TIER_COLORS = { flagship: '#CC785C', balanced: '#4f46e5', fast: '#16a34a' };
 
+const VENDOR_TIER_MODEL = {
+  claude:  { flagship: 'Opus 4.7',       balanced: 'Sonnet 4.6',     fast: 'Haiku 4.5' },
+  openai:  { flagship: 'GPT-5.5',        balanced: 'GPT-5.4',        fast: 'GPT-5.2' },
+  google:  { flagship: 'Gemini 3.1 Pro', balanced: 'Gemini 3 Flash', fast: 'Gemini 3 Flash-Lite' },
+};
+
 function initModelGuide() {
+  // ── Vendor filter (must run first) ──
+  function getActiveVendor() {
+    return document.querySelector('.mg-vendor-chip.active')?.dataset.vendor || 'claude';
+  }
+
+  function applyVendorFilter(vendor) {
+    // Show/hide effort cards
+    document.querySelectorAll('.mg-effort-card[data-vendor]').forEach(card => {
+      card.style.display = card.dataset.vendor === vendor ? '' : 'none';
+    });
+    // Show/hide tier vendor model rows
+    document.querySelectorAll('.mg-tier-vendor-models[data-vendor]').forEach(el => {
+      el.style.display = el.dataset.vendor === vendor ? '' : 'none';
+    });
+    // Re-run rec to refresh model tag
+    updateRec();
+  }
+
+  document.querySelectorAll('.mg-vendor-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.mg-vendor-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      applyVendorFilter(chip.dataset.vendor);
+    });
+  });
+
+  // ── Recommendation ──
   function updateRec() {
     const task = document.querySelector('.mg-task-chip.active')?.dataset.task;
-    const priority = document.querySelector('.mg-priority-chip.active')?.dataset.priority;
-    const rec = MG_RECS[`${task}-${priority}`];
+    const focus = document.querySelector('.mg-focus-chip.active')?.dataset.focus;
+    const rec = MG_RECS[`${task}-${focus}`];
     const div = document.getElementById('mg-recommendation');
     if (!div || !rec) return;
     const color = MG_TIER_COLORS[rec.tier] || '#666';
+    const vendor = getActiveVendor();
+    const modelName = VENDOR_TIER_MODEL[vendor]?.[rec.tier] || '';
+    const modelTag = modelName ? `<span class="mg-rec-model-tag">→ ${modelName}</span>` : '';
+    const examplesHtml = rec.examples && rec.examples.length
+      ? `<ul class="mg-rec-examples">${rec.examples.map(e => `<li>${e}</li>`).join('')}</ul>`
+      : '';
     div.innerHTML = `
       <div class="mg-rec-card" style="border-left-color:${color}">
-        <span class="mg-rec-badge" style="background:${color}20;color:${color}">${rec.tier.charAt(0).toUpperCase()+rec.tier.slice(1)}</span>
+        <div class="mg-rec-badge-row">
+          <span class="mg-rec-badge" style="background:${color}20;color:${color}">${rec.tier.charAt(0).toUpperCase()+rec.tier.slice(1)}</span>
+          ${modelTag}
+        </div>
         <div class="mg-rec-headline">${rec.headline}</div>
         <div class="mg-rec-reason">${rec.reason}</div>
+        ${examplesHtml}
       </div>`;
   }
 
@@ -7668,9 +7711,9 @@ function initModelGuide() {
     });
   });
 
-  document.querySelectorAll('.mg-priority-chip').forEach(chip => {
+  document.querySelectorAll('.mg-focus-chip').forEach(chip => {
     chip.addEventListener('click', () => {
-      document.querySelectorAll('.mg-priority-chip').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.mg-focus-chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       updateRec();
     });
@@ -7682,7 +7725,8 @@ function initModelGuide() {
   document.getElementById('effort-ref-close')?.addEventListener('click', () => overlay?.classList.add('hidden'));
   overlay?.addEventListener('click', e => { if (e.target === overlay) overlay.classList.add('hidden'); });
 
-  updateRec();
+  // Apply initial vendor filter state
+  applyVendorFilter(getActiveVendor());
 }
 
 // ─── ASSESSMENT INIT ──────────────────────────────────────────

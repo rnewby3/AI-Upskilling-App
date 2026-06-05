@@ -471,12 +471,14 @@
     <div id="effort-ref-overlay" class="effort-ref-overlay hidden">
       <div class="effort-ref-modal">
         <button class="effort-ref-close" id="effort-ref-close">✕</button>
-        <div class="effort-ref-modal-title">Effort &amp; Extended Thinking</div>
+        <div class="effort-ref-modal-title">Effort &amp; Thinking Levels</div>
 
         <div class="effort-vendor-block">
           <div class="effort-vendor-name">Claude</div>
-          <div class="effort-level-row"><span class="effort-level-name">Standard</span><span class="effort-level-note">Default. No thinking pass. Full speed.</span></div>
-          <div class="effort-level-row"><span class="effort-level-name">Extended Thinking</span><span class="effort-level-note">Model reasons before responding. You set a token budget. Billed as output tokens.</span></div>
+          <div class="effort-level-row"><span class="effort-level-name">Low</span><span class="effort-level-note">Skips thinking for simple tasks. Fastest and cheapest.</span></div>
+          <div class="effort-level-row"><span class="effort-level-name">Medium</span><span class="effort-level-note">Moderate reasoning pass. Good balance of speed and depth.</span></div>
+          <div class="effort-level-row"><span class="effort-level-name">High</span><span class="effort-level-note">Default for Sonnet 4.6. Almost always triggers a thinking pass before responding.</span></div>
+          <div class="effort-level-row"><span class="effort-level-name">Max</span><span class="effort-level-note">Full reasoning budget. Slowest and most expensive. Use for the hardest tasks only.</span></div>
         </div>
 
         <div class="effort-vendor-block">
@@ -500,7 +502,7 @@
         <div class="effort-level-row"><span class="effort-level-name">DOESN'T</span><span class="effort-level-note">Writing, summarizing, simple Q&amp;A, formatting, brainstorming — often worse + always costs more</span></div>
 
         <div class="effort-myth-box">
-          <strong>Myth:</strong> Max effort ≠ best response. For most business writing and analysis, Extended Thinking produces over-engineered answers and burns tokens unnecessarily.
+          <strong>Myth:</strong> Max effort ≠ best response. For most business writing and analysis, High or Max thinking produces over-engineered answers and burns tokens unnecessarily. Stick with the defaults for 90% of tasks.
         </div>
       </div>
     </div>
@@ -512,6 +514,19 @@
       </div>
       <button class="btn ghost effort-ref-open-btn" id="effort-ref-open-btn">⚡ Effort Guide</button>
     </section>
+
+    <!-- Vendor Filter -->
+    <div class="mg-vendor-filter-row" id="mg-vendor-filter-row">
+      <button class="mg-vendor-chip active" data-vendor="claude" style="--vendor-color:#CC785C">
+        <span class="mg-vendor-dot"></span>Claude
+      </button>
+      <button class="mg-vendor-chip" data-vendor="openai" style="--vendor-color:#111">
+        <span class="mg-vendor-dot"></span>OpenAI
+      </button>
+      <button class="mg-vendor-chip" data-vendor="google" style="--vendor-color:#4285F4">
+        <span class="mg-vendor-dot"></span>Google
+      </button>
+    </div>
 
     <!-- Section 1: Recommender -->
     <div class="mg-section">
@@ -529,12 +544,12 @@
           </div>
         </div>
         <div class="mg-chip-group">
-          <div class="mg-section-title" style="font-size:.78rem;color:var(--ink-3);margin:0 0 .3rem">Priority</div>
+          <div class="mg-section-title" style="font-size:.78rem;color:var(--ink-3);margin:0 0 .3rem">Focus</div>
           <div class="mg-chips">
-            <button class="mg-chip mg-priority-chip active" data-priority="speed">Speed</button>
-            <button class="mg-chip mg-priority-chip" data-priority="cost">Cost</button>
-            <button class="mg-chip mg-priority-chip" data-priority="quality">Quality</button>
-            <button class="mg-chip mg-priority-chip" data-priority="precision">Precision</button>
+            <button class="mg-chip mg-focus-chip active" data-focus="speed">Speed</button>
+            <button class="mg-chip mg-focus-chip" data-focus="cost">Cost</button>
+            <button class="mg-chip mg-focus-chip" data-focus="quality">Quality</button>
+            <button class="mg-chip mg-focus-chip" data-focus="precision">Precision</button>
           </div>
         </div>
       </div>
@@ -563,7 +578,9 @@
             <li>Chat and Q&amp;A</li>
             <li>Simple formatting tasks</li>
           </ul>
-          <div class="mg-tier-models">Opus 4.8 · Opus 4.7 · GPT-5.5 Thinking · GPT-5.5 · Gemini 3.1 Pro · Gemini 3 Thinking</div>
+          <div class="mg-tier-vendor-models" data-vendor="claude">Opus 4.8 · Opus 4.7</div>
+          <div class="mg-tier-vendor-models" data-vendor="openai">GPT-5.5 Thinking · GPT-5.5</div>
+          <div class="mg-tier-vendor-models" data-vendor="google">Gemini 3.1 Pro · Gemini 3 Thinking</div>
         </div>
 
         <div class="mg-tier-card" style="border-top-color:#4f46e5">
@@ -581,7 +598,9 @@
             <li>High-volume simple tasks where Fast is sufficient</li>
             <li>Real-time chat at scale</li>
           </ul>
-          <div class="mg-tier-models">Sonnet 4.6 · GPT-5.5 Instant · GPT-5.4 · GPT-4o · Gemini 3 Flash</div>
+          <div class="mg-tier-vendor-models" data-vendor="claude">Sonnet 4.6</div>
+          <div class="mg-tier-vendor-models" data-vendor="openai">GPT-5.5 Instant · GPT-5.4 · GPT-4o</div>
+          <div class="mg-tier-vendor-models" data-vendor="google">Gemini 3 Flash</div>
         </div>
 
         <div class="mg-tier-card" style="border-top-color:#16a34a">
@@ -599,7 +618,9 @@
             <li>Accuracy matters more than speed</li>
             <li>Complex multi-step reasoning required</li>
           </ul>
-          <div class="mg-tier-models">Haiku 4.5 · GPT-5.2 · Gemini 3 Flash-Lite</div>
+          <div class="mg-tier-vendor-models" data-vendor="claude">Haiku 4.5</div>
+          <div class="mg-tier-vendor-models" data-vendor="openai">GPT-5.2</div>
+          <div class="mg-tier-vendor-models" data-vendor="google">Gemini 3 Flash-Lite</div>
         </div>
 
       </div>
@@ -610,23 +631,31 @@
       <div class="mg-section-title">What does effort actually change?</div>
       <div class="mg-effort-grid">
 
-        <div class="mg-effort-card">
+        <div class="mg-effort-card" data-vendor="claude">
           <div class="mg-effort-vendor">Claude</div>
-          <div class="mg-effort-system">Extended Thinking</div>
+          <div class="mg-effort-system">effort parameter</div>
           <div class="mg-effort-levels">
             <div class="mg-effort-level">
-              <div class="mg-effort-level-name">Standard</div>
-              <div class="mg-effort-level-desc">Default. No thinking pass. Full speed.</div>
+              <div class="mg-effort-level-name">Low</div>
+              <div class="mg-effort-level-desc">Skips thinking for simple tasks. Fastest and cheapest.</div>
             </div>
             <div class="mg-effort-level">
-              <div class="mg-effort-level-name">Extended Thinking</div>
-              <div class="mg-effort-level-desc">Model reasons before responding. You set a token budget. Billed as output tokens.</div>
+              <div class="mg-effort-level-name">Medium</div>
+              <div class="mg-effort-level-desc">Moderate reasoning pass. Good balance of speed and depth.</div>
+            </div>
+            <div class="mg-effort-level">
+              <div class="mg-effort-level-name">High</div>
+              <div class="mg-effort-level-desc">Default for Sonnet 4.6. Almost always triggers a thinking pass.</div>
+            </div>
+            <div class="mg-effort-level">
+              <div class="mg-effort-level-name">Max</div>
+              <div class="mg-effort-level-desc">Full reasoning budget. Slowest and most expensive. Reserve for the hardest tasks.</div>
             </div>
           </div>
-          <div class="mg-effort-note">When to use: Math, logic, complex reasoning tasks only.</div>
+          <div class="mg-effort-note">When to use: High/Max for math, logic, complex reasoning. Low/Medium for writing and summarization.</div>
         </div>
 
-        <div class="mg-effort-card">
+        <div class="mg-effort-card" data-vendor="openai">
           <div class="mg-effort-vendor">OpenAI</div>
           <div class="mg-effort-system">Reasoning Effort (o-series)</div>
           <div class="mg-effort-levels">
@@ -646,7 +675,7 @@
           <div class="mg-effort-note">GPT-5.5 "Thinking" is a separate model (billed at $30/$180/1M), not a setting.</div>
         </div>
 
-        <div class="mg-effort-card">
+        <div class="mg-effort-card" data-vendor="google">
           <div class="mg-effort-vendor">Google</div>
           <div class="mg-effort-system">thinking_level</div>
           <div class="mg-effort-levels">
@@ -665,7 +694,7 @@
       </div>
 
       <div class="mg-myth-buster">
-        <strong>Effort ≠ better writing.</strong> Extended thinking helps with reasoning, math, and multi-step logic. For writing, summarizing, Q&amp;A, or formatting — it produces over-engineered responses and always costs more tokens. Most executives should leave effort at Standard for 90% of their use cases.
+        <strong>Effort ≠ better writing.</strong> Higher thinking levels help with reasoning, math, and multi-step logic. For writing, summarizing, Q&amp;A, or formatting — they produce over-engineered responses and always cost more tokens. Most executives should use default effort levels for 90% of their use cases.
       </div>
     </div>
 
