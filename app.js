@@ -7730,27 +7730,13 @@ function initCalculator() {
     })();
 
     const enabledChips = [...document.querySelectorAll('.calc-chip.active')];
-    if (inputTokens === 0 || enabledChips.length === 0) {
-      resultsDiv.innerHTML = '';
+
+    if (enabledChips.length === 0) {
+      resultsDiv.innerHTML = `<div class="calc-results-empty">Select models above to compare costs</div>`;
       return;
     }
 
-    // Update comparison table
-    const sub = document.getElementById('calc-compare-sub');
-    if (sub) sub.textContent = `${inputTokens.toLocaleString()} input + ${responseTokens.toLocaleString()} response tokens per exchange`;
-    [
-      { id: 'cref-haiku3',  exchId: 'cref-haiku3-exch',  inp: 1.00, out: 5.00 },
-      { id: 'cref-haiku35', exchId: 'cref-haiku35-exch', inp: 3.00, out: 15.00 },
-      { id: 'cref-sonnet4', exchId: 'cref-sonnet4-exch', inp: 5.00, out: 25.00 },
-    ].forEach(({ id, exchId, inp, out }) => {
-      const costEl = document.getElementById(id);
-      const exchEl = document.getElementById(exchId);
-      if (!costEl) return;
-      const cost = (inputTokens * inp + responseTokens * out) / 1_000_000;
-      costEl.textContent = formatCost(cost);
-      if (exchEl) exchEl.textContent = cost > 0 ? Math.floor(50 / cost).toLocaleString() : '—';
-    });
-
+    const hasTokens = inputTokens > 0;
     const warnings = [];
     const cards = enabledChips.map(chip => {
       const name = chip.querySelector('.calc-chip-name')?.textContent || chip.textContent.split('$')[0].trim();
@@ -7758,15 +7744,34 @@ function initCalculator() {
       const outputRate = parseFloat(chip.dataset.output) || 0;
       const color = chip.style.getPropertyValue('--chip-color') || '#4f46e5';
 
-      const costPerExchange = (inputTokens * inputRate + responseTokens * outputRate) / 1_000_000;
-      if (costPerExchange <= 0) return '';
+      const inputCostStr = '$' + (inputRate / 1000).toFixed(inputRate < 1 ? 5 : 4) + '/1K';
+      const outputCostStr = '$' + (outputRate / 1000).toFixed(outputRate < 1 ? 5 : 4) + '/1K';
 
+      if (!hasTokens) {
+        return `
+          <div class="calc-result-card">
+            <div class="calc-result-left">
+              <div class="calc-vendor-dot" style="background:${color}"></div>
+              <div>
+                <div class="calc-result-name">${name}</div>
+                <div class="calc-result-rates">In: ${inputCostStr} &nbsp;·&nbsp; Out: ${outputCostStr}</div>
+              </div>
+            </div>
+            <div class="calc-result-center">
+              <div class="calc-result-cost">—</div>
+              <div class="calc-result-per">per exchange</div>
+            </div>
+            <div class="calc-result-right">
+              <div class="calc-result-exchanges">— exchanges</div>
+              <span class="calc-days-badge">— days</span>
+            </div>
+          </div>`;
+      }
+
+      const costPerExchange = (inputTokens * inputRate + responseTokens * outputRate) / 1_000_000;
       const exchangesOnBudget = budget / costPerExchange;
       const daysOfBudget = exchangesOnBudget / dailyPrompts;
       const badgeClass = daysBadgeClass(daysOfBudget);
-
-      const inputCostStr = '$' + (inputRate / 1000).toFixed(inputRate < 1 ? 5 : 4) + '/1K';
-      const outputCostStr = '$' + (outputRate / 1000).toFixed(outputRate < 1 ? 5 : 4) + '/1K';
 
       if (daysOfBudget < 5) {
         warnings.push({ name, days: daysOfBudget, color, budget, dailyPrompts });
@@ -7790,7 +7795,7 @@ function initCalculator() {
             <span class="calc-days-badge ${badgeClass}">${formatDays(daysOfBudget)} days</span>
           </div>
         </div>`;
-    }).filter(Boolean).join('');
+    }).join('');
 
     const warningsHtml = warnings.length ? `
       <div class="calc-warnings">
@@ -7800,10 +7805,14 @@ function initCalculator() {
           </div>`).join('')}
       </div>` : '';
 
+    const subText = hasTokens
+      ? `${inputTokens.toLocaleString()} input + ${responseTokens.toLocaleString()} response tokens per exchange`
+      : 'Enter a prompt or select a scenario to see live costs';
+
     resultsDiv.innerHTML = `
       <div class="calc-results-header">
         <div class="calc-results-title">Cost Comparison</div>
-        <div class="calc-results-sub">${inputTokens.toLocaleString()} input + ${responseTokens.toLocaleString()} response tokens per exchange</div>
+        <div class="calc-results-sub">${subText}</div>
       </div>
       <div class="calc-result-cards">${cards}</div>
       ${warningsHtml}`;

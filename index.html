@@ -352,26 +352,6 @@
           <p class="calc-resp-note" id="calc-resp-note-override" style="display:none">Response length is set by the active scenario — deselect to override.</p>
         </div>
 
-        <!-- Comparison table — fills row 3 col 1 -->
-        <div class="calc-card calc-compare-section" id="calc-compare-section">
-          <div class="calc-compare-header">
-            <h4 class="calc-compare-title">Claude Model Cost Comparison (2026)</h4>
-            <span class="calc-compare-sub" id="calc-compare-sub">Enter a prompt or select a scenario to see live costs</span>
-          </div>
-          <div class="calc-ref-table-wrap">
-            <table class="calc-ref-table" id="calc-ref-comparison">
-              <thead>
-                <tr><th>Model</th><th>Rates (in / out per 1M)</th><th>Cost / exchange</th><th>Exchanges on $50</th></tr>
-              </thead>
-              <tbody>
-                <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude Haiku 4.5</td><td class="calc-rate-cell">$1.00 / $5.00</td><td id="cref-haiku3">—</td><td id="cref-haiku3-exch">—</td></tr>
-                <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude Sonnet 4.6</td><td class="calc-rate-cell">$3.00 / $15.00</td><td id="cref-haiku35">—</td><td id="cref-haiku35-exch">—</td></tr>
-                <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude Opus 4.7</td><td class="calc-rate-cell">$5.00 / $25.00</td><td id="cref-sonnet4">—</td><td id="cref-sonnet4-exch">—</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
       </div><!-- /calc-left -->
 
       <!-- RIGHT COLUMN -->
@@ -449,12 +429,14 @@
           </div>
         </div>
 
-        <!-- Results -->
-        <div id="calc-results"></div>
-
       </div><!-- /calc-right -->
 
     </div><!-- /calc-layout -->
+
+    <!-- Results — full width below grid -->
+    <div class="calc-results-section">
+      <div id="calc-results"></div>
+    </div>
 
   </div><!-- /view-calculator -->
 
