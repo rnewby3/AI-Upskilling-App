@@ -2358,6 +2358,7 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
 .mg-top-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  align-items: start;
   gap: 1.5rem;
   max-width: 1200px;
   margin: 0 auto 2rem;
