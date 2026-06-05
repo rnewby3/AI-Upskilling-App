@@ -1238,7 +1238,8 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
 #calc-card-response { grid-column: 1; grid-row: 2; }
 #calc-card-models   { grid-column: 2; grid-row: 1; }
 #calc-card-budget   { grid-column: 2; grid-row: 2; }
-#calc-results       { grid-column: 2; grid-row: 3; }
+#calc-results           { grid-column: 2; grid-row: 3; }
+#calc-compare-section   { grid-column: 1; grid-row: 3; }
 
 .calc-card {
   background: var(--surface);
@@ -1423,6 +1424,12 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
   resize: vertical;
   transition: border-color .15s;
   min-height: 90px;
+}
+
+#calc-input:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  background: var(--surface-2, #f5f5f5);
 }
 
 #calc-input:focus {
@@ -1769,7 +1776,7 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
   white-space: nowrap;
   flex-shrink: 0;
   font-size: .82rem;
-  align-self: center;
+  align-self: flex-end;
 }
 
 /* Reference guide modal overlay */
@@ -1825,9 +1832,7 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
 
 /* Comparison section below the grid */
 .calc-compare-section {
-  max-width: 1200px;
-  margin: 0 auto 2rem;
-  padding: 0 clamp(1rem, 4vw, 2.5rem);
+  overflow: hidden;
 }
 
 .calc-compare-header {
@@ -1951,7 +1956,8 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
   #calc-card-models   { grid-column: 1; grid-row: 2; }
   #calc-card-response { grid-column: 1; grid-row: 3; }
   #calc-card-budget   { grid-column: 1; grid-row: 4; }
-  #calc-results       { grid-column: 1; grid-row: 5; }
+  #calc-results           { grid-column: 1; grid-row: 5; }
+  #calc-compare-section   { grid-column: 1; grid-row: 6; }
   .calc-scenarios { grid-template-columns: 1fr 1fr; }
   .calc-budget-daily-row { grid-template-columns: 1fr; gap: .75rem; }
   .calc-result-card { grid-template-columns: 1fr auto; }
