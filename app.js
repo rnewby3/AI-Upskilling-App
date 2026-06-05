@@ -7656,10 +7656,10 @@ const CALC_PRESETS = {
 };
 
 const SCENARIO_LABELS = {
-  '6000-12000': '90-Slide Board Deck — 6,000 input tokens + 12,000 response tokens',
-  '14000-4500': 'HTML Dashboard (3 Excels) — 14,000 input tokens + 4,500 response tokens',
-  '8000-2000': 'Contract Review — 8,000 input tokens + 2,000 response tokens',
-  '5000-1500': 'Meeting Transcript — 5,000 input tokens + 1,500 response tokens',
+  '1000-2000':  '15-Slide Presentation — 1,000 input tokens + 2,000 response tokens',
+  '9000-4000':  'HTML Dashboard (2 Excels) — 9,000 input tokens + 4,000 response tokens',
+  '8000-2000':  'Contract Review — 8,000 input tokens + 2,000 response tokens',
+  '5000-1500':  'Meeting Transcript — 5,000 input tokens + 1,500 response tokens',
 };
 
 function initCalculator() {
@@ -7734,19 +7734,21 @@ function initCalculator() {
       return;
     }
 
-    // Update reference table
-    const refInputTokens = inputTokens;
-    const refResponseTokens = responseTokens;
+    // Update comparison table
+    const sub = document.getElementById('calc-compare-sub');
+    if (sub) sub.textContent = `${inputTokens.toLocaleString()} input + ${responseTokens.toLocaleString()} response tokens per exchange`;
     [
-      { id: 'cref-haiku3', inp: 0.25, out: 1.25 },
-      { id: 'cref-haiku35', inp: 0.80, out: 4.00 },
-      { id: 'cref-sonnet4', inp: 3.00, out: 15.00 },
-      { id: 'cref-opus4', inp: 15.00, out: 75.00 },
-    ].forEach(({ id, inp, out }) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const cost = (refInputTokens * inp + refResponseTokens * out) / 1_000_000;
-      el.textContent = formatCost(cost);
+      { id: 'cref-haiku3',  exchId: 'cref-haiku3-exch',  inp: 0.25,  out: 1.25 },
+      { id: 'cref-haiku35', exchId: 'cref-haiku35-exch', inp: 0.80,  out: 4.00 },
+      { id: 'cref-sonnet4', exchId: 'cref-sonnet4-exch', inp: 3.00,  out: 15.00 },
+      { id: 'cref-opus4',   exchId: 'cref-opus4-exch',   inp: 15.00, out: 75.00 },
+    ].forEach(({ id, exchId, inp, out }) => {
+      const costEl = document.getElementById(id);
+      const exchEl = document.getElementById(exchId);
+      if (!costEl) return;
+      const cost = (inputTokens * inp + responseTokens * out) / 1_000_000;
+      costEl.textContent = formatCost(cost);
+      if (exchEl) exchEl.textContent = cost > 0 ? Math.floor(50 / cost).toLocaleString() : '—';
     });
 
     const warnings = [];
@@ -7887,7 +7889,11 @@ function initCalculator() {
     });
   });
 
-  // Breadcrumb wired globally by initNav
+  // Reference guide modal
+  const overlay = document.getElementById('calc-ref-overlay');
+  document.getElementById('calc-ref-open-btn')?.addEventListener('click', () => overlay?.classList.remove('hidden'));
+  document.getElementById('calc-ref-close')?.addEventListener('click', () => overlay?.classList.add('hidden'));
+  overlay?.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.add('hidden'); });
 
   recalculate();
 }

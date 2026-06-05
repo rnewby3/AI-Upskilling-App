@@ -249,7 +249,28 @@
         <h2>Token Cost Calculator</h2>
         <p class="page-sub">Understand the real cost difference between AI models before your budget runs out.</p>
       </div>
+      <button class="btn ghost calc-ref-open-btn" id="calc-ref-open-btn">📖 Token Reference Guide</button>
     </section>
+
+    <!-- Reference Guide Modal -->
+    <div class="calc-ref-overlay hidden" id="calc-ref-overlay">
+      <div class="calc-ref-modal" role="dialog" aria-modal="true">
+        <button class="calc-ref-close" id="calc-ref-close" aria-label="Close">✕</button>
+        <h3 class="calc-ref-modal-title">Token Reference Guide</h3>
+        <div class="calc-ref-grid">
+          <div class="calc-ref-row calc-ref-header"><span>Example</span><span>~Tokens</span></div>
+          <div class="calc-ref-row"><span>"Hello"</span><span>1</span></div>
+          <div class="calc-ref-row"><span>"Hello, how can I help you today?"</span><span>~8</span></div>
+          <div class="calc-ref-row"><span>A typical sentence (15 words)</span><span>~20</span></div>
+          <div class="calc-ref-row"><span>A paragraph (100 words)</span><span>~133</span></div>
+          <div class="calc-ref-row"><span>A page of text (500 words)</span><span>~667</span></div>
+          <div class="calc-ref-row"><span>A 10-page document</span><span>~3,300</span></div>
+          <div class="calc-ref-row"><span>15-slide presentation (text content)</span><span>~1,000</span></div>
+          <div class="calc-ref-row"><span>2 Excel files as CSV data</span><span>~9,000</span></div>
+        </div>
+        <p class="calc-ref-note">~4 characters per token (cl100k_base approximation for English text).</p>
+      </div>
+    </div>
 
     <div class="calc-layout">
 
@@ -281,18 +302,18 @@
           <!-- Scenario cards -->
           <div class="calc-section-label">Real-world C-suite scenarios <span class="calc-section-note">— pre-set input &amp; response tokens</span></div>
           <div class="calc-scenarios">
-            <button class="calc-scenario-card" data-input-tokens="6000" data-output-tokens="12000">
+            <button class="calc-scenario-card" data-input-tokens="1000" data-output-tokens="2000">
               <span class="calc-scenario-icon">📊</span>
               <div class="calc-scenario-body">
-                <div class="calc-scenario-name">90-Slide Board Deck</div>
-                <div class="calc-scenario-tokens">6,000 in · 12,000 out</div>
+                <div class="calc-scenario-name">15-Slide Presentation</div>
+                <div class="calc-scenario-tokens">1,000 in · 2,000 out</div>
               </div>
             </button>
-            <button class="calc-scenario-card" data-input-tokens="14000" data-output-tokens="4500">
+            <button class="calc-scenario-card" data-input-tokens="9000" data-output-tokens="4000">
               <span class="calc-scenario-icon">📈</span>
               <div class="calc-scenario-body">
-                <div class="calc-scenario-name">HTML Dashboard (3 Excels)</div>
-                <div class="calc-scenario-tokens">14,000 in · 4,500 out</div>
+                <div class="calc-scenario-name">HTML Dashboard (2 Excels)</div>
+                <div class="calc-scenario-tokens">9,000 in · 4,000 out</div>
               </div>
             </button>
             <button class="calc-scenario-card" data-input-tokens="8000" data-output-tokens="2000">
@@ -418,37 +439,26 @@
 
     </div><!-- /calc-layout -->
 
-    <!-- Token Reference Guide (collapsible) -->
-    <details class="calc-reference">
-      <summary class="calc-reference-title">Token Reference Guide <span class="calc-ref-toggle-hint">— click to expand</span></summary>
-      <div class="calc-ref-grid">
-        <div class="calc-ref-row calc-ref-header"><span>Example</span><span>~Tokens</span></div>
-        <div class="calc-ref-row"><span>"Hello"</span><span>1</span></div>
-        <div class="calc-ref-row"><span>"Hello, how can I help you today?"</span><span>~8</span></div>
-        <div class="calc-ref-row"><span>A typical sentence (15 words)</span><span>~20</span></div>
-        <div class="calc-ref-row"><span>A paragraph (100 words)</span><span>~133</span></div>
-        <div class="calc-ref-row"><span>A page of text (500 words)</span><span>~667</span></div>
-        <div class="calc-ref-row"><span>A 10-page document</span><span>~3,300</span></div>
-        <div class="calc-ref-row"><span>90-slide board deck (text content)</span><span>~6,000</span></div>
-        <div class="calc-ref-row"><span>3 Excel files as CSV data</span><span>~14,000</span></div>
+    <!-- Comparison table — full width below the grid -->
+    <div class="calc-compare-section" id="calc-compare-section">
+      <div class="calc-compare-header">
+        <h4 class="calc-compare-title">Claude Model Cost Comparison</h4>
+        <span class="calc-compare-sub" id="calc-compare-sub">Enter a prompt or select a scenario to see live costs</span>
       </div>
-      <p class="calc-ref-note">~4 characters per token (cl100k_base approximation for English text).</p>
-
-      <h4 class="calc-ref-compare-title">Claude Model Cost Comparison — Same Prompt</h4>
       <div class="calc-ref-table-wrap">
         <table class="calc-ref-table" id="calc-ref-comparison">
           <thead>
-            <tr><th>Model</th><th>Input Rate</th><th>Output Rate</th><th>Cost / exchange</th></tr>
+            <tr><th>Model</th><th>Input Rate</th><th>Output Rate</th><th>Cost / exchange</th><th>Exchanges on $50</th></tr>
           </thead>
           <tbody>
-            <tr><td>Claude 3 Haiku</td><td>$0.25/1M</td><td>$1.25/1M</td><td id="cref-haiku3">—</td></tr>
-            <tr><td>Claude 3.5 Haiku</td><td>$0.80/1M</td><td>$4.00/1M</td><td id="cref-haiku35">—</td></tr>
-            <tr><td>Claude Sonnet 4</td><td>$3.00/1M</td><td>$15.00/1M</td><td id="cref-sonnet4">—</td></tr>
-            <tr><td>Claude Opus 4</td><td>$15.00/1M</td><td>$75.00/1M</td><td id="cref-opus4">—</td></tr>
+            <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude 3 Haiku</td><td>$0.25/1M</td><td>$1.25/1M</td><td id="cref-haiku3">—</td><td id="cref-haiku3-exch">—</td></tr>
+            <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude 3.5 Haiku</td><td>$0.80/1M</td><td>$4.00/1M</td><td id="cref-haiku35">—</td><td id="cref-haiku35-exch">—</td></tr>
+            <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude Sonnet 4</td><td>$3.00/1M</td><td>$15.00/1M</td><td id="cref-sonnet4">—</td><td id="cref-sonnet4-exch">—</td></tr>
+            <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude Opus 4</td><td>$15.00/1M</td><td>$75.00/1M</td><td id="cref-opus4">—</td><td id="cref-opus4-exch">—</td></tr>
           </tbody>
         </table>
       </div>
-    </details>
+    </div>
 
   </div><!-- /view-calculator -->
 
