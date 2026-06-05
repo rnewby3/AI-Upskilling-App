@@ -7614,6 +7614,77 @@ function renderAssessResults() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+// ─── MODEL GUIDE ──────────────────────────────────────────────
+const MG_RECS = {
+  'summarize-speed':     { tier:'fast',     headline:'Fast is all you need', reason:'Summarization is pattern-matching, not reasoning. Fast models do it well and respond 3–5× quicker.' },
+  'summarize-cost':      { tier:'fast',     headline:'Fast keeps costs minimal', reason:"Don't overpay for summarization. Fast tier handles it with zero meaningful quality drop." },
+  'summarize-quality':   { tier:'balanced', headline:'Balanced adds real nuance', reason:'Better coherence, more accurate synthesis of complex material. Worth the small cost bump.' },
+  'summarize-precision': { tier:'balanced', headline:'Balanced is your sweet spot', reason:'Precise summarization needs good reasoning — Balanced delivers without flagship pricing.' },
+  'write-speed':         { tier:'fast',     headline:'Fast for first drafts', reason:'Speed matters more than perfection on a first pass. Refine it yourself or in a follow-up.' },
+  'write-cost':          { tier:'fast',     headline:'Fast handles writing economically', reason:"Most writing tasks don't need deep reasoning. Fast tier produces solid drafts at a fraction of the cost." },
+  'write-quality':       { tier:'balanced', headline:'Balanced is the writing sweet spot', reason:'Stronger tone, better flow, more contextually aware. This is where Balanced clearly beats Fast.' },
+  'write-precision':     { tier:'balanced', headline:'Balanced nails tone and style', reason:"Flagship rarely improves writing over Balanced — you're paying for reasoning you don't need." },
+  'analyze-speed':       { tier:'balanced', headline:'Balanced minimum for analysis', reason:'Analysis needs reasoning. Fast models miss nuance and make logical errors on complex data.' },
+  'analyze-cost':        { tier:'balanced', headline:'Balanced is your floor here', reason:'Going Fast on analysis risks bad conclusions. Balanced is the cost-efficient right answer.' },
+  'analyze-quality':     { tier:'balanced', headline:'Balanced gets you 90% there', reason:"Most business analysis tasks don't need Flagship. Balanced handles structured data and logic well." },
+  'analyze-precision':   { tier:'flagship', headline:'Worth going Flagship', reason:'High-stakes analysis — financial modeling, risk assessment, complex multi-variable reasoning — is exactly what Flagship is built for.' },
+  'reason-speed':        { tier:'balanced', headline:"Don't go below Balanced", reason:'Reasoning tasks need actual reasoning. Fast models cut corners on logic chains — errors compound.' },
+  'reason-cost':         { tier:'balanced', headline:'Balanced is the minimum', reason:"You can't cheap out on reasoning. Balanced handles most logical tasks; upgrade to Flagship when stakes are high." },
+  'reason-quality':      { tier:'flagship', headline:'This is Flagship territory', reason:'Multi-step reasoning, complex problem decomposition, high-stakes decisions — Flagship earns its price here.' },
+  'reason-precision':    { tier:'flagship', headline:'Flagship, full stop', reason:'When precision in reasoning directly affects outcomes, Flagship + extended thinking is the right call.' },
+  'code-speed':          { tier:'balanced', headline:'Balanced handles most code', reason:'Code generation is structured reasoning. Balanced produces clean, functional code for most tasks.' },
+  'code-cost':           { tier:'balanced', headline:'Balanced is the sweet spot', reason:'Fast struggles with code logic. Balanced gives reliable output at reasonable cost.' },
+  'code-quality':        { tier:'balanced', headline:'Balanced for most code', reason:"Unless you're doing complex system architecture or debugging tricky logic, Balanced is more than enough." },
+  'code-precision':      { tier:'flagship', headline:'Go Flagship for complex code', reason:"Architecture decisions, debugging intricate systems, security analysis — Flagship's reasoning depth pays off here." },
+  'chat-speed':          { tier:'fast',     headline:'Fast is perfect for chat', reason:'Chat is conversational and high-volume. Fast models respond quickly and handle Q&A cleanly.' },
+  'chat-cost':           { tier:'fast',     headline:'Fast, no question', reason:"Don't burn budget on chat. Fast tier handles it at a fraction of the cost — this is its best use case." },
+  'chat-quality':        { tier:'balanced', headline:'Balanced for smarter replies', reason:'When chat quality matters — nuanced context, complex questions — Balanced is worth it.' },
+  'chat-precision':      { tier:'balanced', headline:'Balanced handles precise Q&A', reason:'For accurate, well-reasoned answers to specific questions, Balanced covers it without flagship pricing.' },
+};
+
+const MG_TIER_COLORS = { flagship: '#CC785C', balanced: '#4f46e5', fast: '#16a34a' };
+
+function initModelGuide() {
+  function updateRec() {
+    const task = document.querySelector('.mg-task-chip.active')?.dataset.task;
+    const priority = document.querySelector('.mg-priority-chip.active')?.dataset.priority;
+    const rec = MG_RECS[`${task}-${priority}`];
+    const div = document.getElementById('mg-recommendation');
+    if (!div || !rec) return;
+    const color = MG_TIER_COLORS[rec.tier] || '#666';
+    div.innerHTML = `
+      <div class="mg-rec-card" style="border-left-color:${color}">
+        <span class="mg-rec-badge" style="background:${color}20;color:${color}">${rec.tier.charAt(0).toUpperCase()+rec.tier.slice(1)}</span>
+        <div class="mg-rec-headline">${rec.headline}</div>
+        <div class="mg-rec-reason">${rec.reason}</div>
+      </div>`;
+  }
+
+  document.querySelectorAll('.mg-task-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.mg-task-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      updateRec();
+    });
+  });
+
+  document.querySelectorAll('.mg-priority-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.mg-priority-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      updateRec();
+    });
+  });
+
+  // Effort modal
+  const overlay = document.getElementById('effort-ref-overlay');
+  document.getElementById('effort-ref-open-btn')?.addEventListener('click', () => overlay?.classList.remove('hidden'));
+  document.getElementById('effort-ref-close')?.addEventListener('click', () => overlay?.classList.add('hidden'));
+  overlay?.addEventListener('click', e => { if (e.target === overlay) overlay.classList.add('hidden'); });
+
+  updateRec();
+}
+
 // ─── ASSESSMENT INIT ──────────────────────────────────────────
 function initAssessment() {
   loadAssessState();
@@ -7927,6 +7998,7 @@ function init() {
   updateStats();
   initAssessment();
   initCalculator();
+  initModelGuide();
   // Completion modal close
   document.getElementById("completion-close")?.addEventListener("click", () => {
     document.getElementById("completion-modal")?.classList.add("hidden");
