@@ -333,12 +333,11 @@
           </div>
           <div id="calc-scenario-active-label" class="calc-scenario-active-label hidden"></div>
 
-          <textarea id="calc-input" rows="5" placeholder="Or type / paste your own prompt here..."></textarea>
-        </div>
+          <textarea id="calc-input" rows="4" placeholder="Or type / paste your own prompt here..."></textarea>
 
-        <!-- Card 2: Response Length -->
-        <div class="calc-card" id="calc-card-response">
-          <h4 class="calc-card-title">Expected Response Length</h4>
+          <hr class="calc-section-divider">
+
+          <div class="calc-section-label">Expected Response Length</div>
           <div class="calc-response-btns">
             <button class="calc-resp-btn" data-tokens="150">Short<span class="calc-resp-sub">150 tokens</span></button>
             <button class="calc-resp-btn active" data-tokens="500">Medium<span class="calc-resp-sub">500 tokens</span></button>
@@ -349,7 +348,33 @@
             <input type="number" id="calc-response-custom" placeholder="e.g. 800" min="1" max="200000" />
             <span class="calc-custom-label">tokens</span>
           </div>
-          <p class="calc-resp-note" id="calc-resp-note-override" style="display:none">Response length is set by the active scenario — deselect to override.</p>
+          <p class="calc-resp-note" id="calc-resp-note-override" style="display:none">Response length set by active scenario — deselect to override.</p>
+
+          <hr class="calc-section-divider">
+
+          <div class="calc-budget-daily-row">
+            <div class="calc-budget-section">
+              <div class="calc-section-label">Monthly Budget</div>
+              <div class="calc-budget-btns">
+                <button class="calc-budget-btn active" data-budget="50">$50</button>
+                <button class="calc-budget-btn" data-budget="100">$100</button>
+                <button class="calc-budget-btn" data-budget="200">$200</button>
+                <button class="calc-budget-btn" data-budget="custom">Custom</button>
+              </div>
+              <div id="calc-budget-custom-wrap" class="calc-custom-wrap hidden">
+                <span class="calc-custom-label">$</span>
+                <input type="number" id="calc-budget-custom" placeholder="e.g. 500" min="1" />
+              </div>
+            </div>
+            <div class="calc-daily-section">
+              <div class="calc-section-label">Daily Exchanges</div>
+              <div class="calc-daily-row">
+                <input type="number" id="calc-daily" value="30" min="1" max="10000" />
+                <span class="calc-daily-label">per day</span>
+              </div>
+            </div>
+          </div>
+
         </div>
 
       </div><!-- /calc-left -->
@@ -425,32 +450,6 @@
           </div>
 
           <p class="calc-chip-hint">Per 1M tokens (input/output). Click to toggle. Default shows one per tier.</p>
-        </div>
-
-        <!-- Card 4: Budget + Daily (merged) -->
-        <div class="calc-card" id="calc-card-budget">
-          <div class="calc-budget-daily-row">
-            <div class="calc-budget-section">
-              <h4 class="calc-card-title">Monthly Budget</h4>
-              <div class="calc-budget-btns">
-                <button class="calc-budget-btn active" data-budget="50">$50</button>
-                <button class="calc-budget-btn" data-budget="100">$100</button>
-                <button class="calc-budget-btn" data-budget="200">$200</button>
-                <button class="calc-budget-btn" data-budget="custom">Custom</button>
-              </div>
-              <div id="calc-budget-custom-wrap" class="calc-custom-wrap hidden">
-                <span class="calc-custom-label">$</span>
-                <input type="number" id="calc-budget-custom" placeholder="e.g. 500" min="1" />
-              </div>
-            </div>
-            <div class="calc-daily-section">
-              <h4 class="calc-card-title">Daily Exchanges</h4>
-              <div class="calc-daily-row">
-                <input type="number" id="calc-daily" value="30" min="1" max="10000" />
-                <span class="calc-daily-label">per day</span>
-              </div>
-            </div>
-          </div>
         </div>
 
       </div><!-- /calc-right -->
