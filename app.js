@@ -7719,12 +7719,6 @@ function initModelGuide() {
     });
   });
 
-  // Effort modal
-  const overlay = document.getElementById('effort-ref-overlay');
-  document.getElementById('effort-ref-open-btn')?.addEventListener('click', () => overlay?.classList.remove('hidden'));
-  document.getElementById('effort-ref-close')?.addEventListener('click', () => overlay?.classList.add('hidden'));
-  overlay?.addEventListener('click', e => { if (e.target === overlay) overlay.classList.add('hidden'); });
-
   // Apply initial vendor filter state
   applyVendorFilter(getActiveVendor());
 }

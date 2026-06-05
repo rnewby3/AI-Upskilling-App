@@ -2037,8 +2037,8 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
 
 .mg-chip-groups {
   display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: .75rem;
   margin-bottom: 1rem;
 }
 
@@ -2182,8 +2182,8 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
 
 /* Effort grid */
 .mg-effort-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
   margin-bottom: 1rem;
 }
@@ -2465,6 +2465,5 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
 }
 
 @media (max-width: 840px) {
-  .mg-tier-grid, .mg-effort-grid { grid-template-columns: 1fr; }
-  .mg-chip-groups { flex-direction: column; gap: 1rem; }
+  .mg-tier-grid { grid-template-columns: 1fr; }
 }

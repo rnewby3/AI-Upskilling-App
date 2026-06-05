@@ -467,52 +467,11 @@
   <!-- ── MODEL GUIDE ── -->
   <div id="view-model-guide" class="view hidden">
 
-    <!-- Effort Guide Modal -->
-    <div id="effort-ref-overlay" class="effort-ref-overlay hidden">
-      <div class="effort-ref-modal">
-        <button class="effort-ref-close" id="effort-ref-close">✕</button>
-        <div class="effort-ref-modal-title">Effort &amp; Thinking Levels</div>
-
-        <div class="effort-vendor-block">
-          <div class="effort-vendor-name">Claude</div>
-          <div class="effort-level-row"><span class="effort-level-name">Low</span><span class="effort-level-note">Skips thinking for simple tasks. Fastest and cheapest.</span></div>
-          <div class="effort-level-row"><span class="effort-level-name">Medium</span><span class="effort-level-note">Moderate reasoning pass. Good balance of speed and depth.</span></div>
-          <div class="effort-level-row"><span class="effort-level-name">High</span><span class="effort-level-note">Default for Sonnet 4.6. Almost always triggers a thinking pass before responding.</span></div>
-          <div class="effort-level-row"><span class="effort-level-name">Max</span><span class="effort-level-note">Full reasoning budget. Slowest and most expensive. Use for the hardest tasks only.</span></div>
-        </div>
-
-        <div class="effort-vendor-block">
-          <div class="effort-vendor-name">OpenAI</div>
-          <div class="effort-level-row"><span class="effort-level-name">Low</span><span class="effort-level-note">Minimal reasoning pass. Faster, cheaper.</span></div>
-          <div class="effort-level-row"><span class="effort-level-name">Medium</span><span class="effort-level-note">Balanced reasoning. Default for most tasks.</span></div>
-          <div class="effort-level-row"><span class="effort-level-name">High</span><span class="effort-level-note">Full reasoning budget. Slowest and most expensive.</span></div>
-          <div class="effort-level-row"><span class="effort-level-name">Note</span><span class="effort-level-note">GPT-5.5 "Thinking" model variants are separate models, not settings.</span></div>
-        </div>
-
-        <div class="effort-vendor-block">
-          <div class="effort-vendor-name">Google</div>
-          <div class="effort-level-row"><span class="effort-level-name">Off</span><span class="effort-level-note">No thinking. Standard speed.</span></div>
-          <div class="effort-level-row"><span class="effort-level-name">Low</span><span class="effort-level-note">Light reasoning pass. Billed as output tokens.</span></div>
-          <div class="effort-level-row"><span class="effort-level-name">Medium</span><span class="effort-level-note">Moderate reasoning depth. Billed as output tokens.</span></div>
-          <div class="effort-level-row"><span class="effort-level-name">High</span><span class="effort-level-note">Full reasoning depth. Billed as output tokens.</span></div>
-        </div>
-
-        <div class="effort-section-head">When effort helps — and when it doesn't</div>
-        <div class="effort-level-row"><span class="effort-level-name">HELPS</span><span class="effort-level-note">Math proofs, logic puzzles, multi-step reasoning, complex code debugging, legal reasoning</span></div>
-        <div class="effort-level-row"><span class="effort-level-name">DOESN'T</span><span class="effort-level-note">Writing, summarizing, simple Q&amp;A, formatting, brainstorming — often worse + always costs more</span></div>
-
-        <div class="effort-myth-box">
-          <strong>Myth:</strong> Max effort ≠ best response. For most business writing and analysis, High or Max thinking produces over-engineered answers and burns tokens unnecessarily. Stick with the defaults for 90% of tasks.
-        </div>
-      </div>
-    </div>
-
     <section class="page-header">
       <div>
         <h2 class="page-title">Model Guide</h2>
         <p class="page-subtitle">Pick the right model for the job — not just the biggest one.</p>
       </div>
-      <button class="btn ghost effort-ref-open-btn" id="effort-ref-open-btn">⚡ Effort Guide</button>
     </section>
 
     <!-- Vendor Filter -->
