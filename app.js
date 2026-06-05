@@ -7752,18 +7752,15 @@ function initCalculator() {
           <div class="calc-result-card">
             <div class="calc-result-left">
               <div class="calc-vendor-dot" style="background:${color}"></div>
-              <div>
-                <div class="calc-result-name">${name}</div>
-                <div class="calc-result-rates">In: ${inputCostStr} &nbsp;·&nbsp; Out: ${outputCostStr}</div>
-              </div>
+              <div class="calc-result-name">${name}</div>
             </div>
-            <div class="calc-result-center">
-              <div class="calc-result-cost">—</div>
-              <div class="calc-result-per">per exchange</div>
-            </div>
-            <div class="calc-result-right">
-              <div class="calc-result-exchanges">— exchanges</div>
-              <span class="calc-days-badge">— days</span>
+            <div class="calc-result-rates">${inputCostStr} in &nbsp;·&nbsp; ${outputCostStr} out</div>
+            <hr class="calc-result-divider">
+            <div class="calc-result-cost">—</div>
+            <div class="calc-result-per">per exchange</div>
+            <div class="calc-result-footer">
+              <span class="calc-result-exchanges">—</span>
+              <span class="calc-days-badge">—</span>
             </div>
           </div>`;
       }
@@ -7781,17 +7778,14 @@ function initCalculator() {
         <div class="calc-result-card">
           <div class="calc-result-left">
             <div class="calc-vendor-dot" style="background:${color}"></div>
-            <div>
-              <div class="calc-result-name">${name}</div>
-              <div class="calc-result-rates">In: ${inputCostStr} &nbsp;·&nbsp; Out: ${outputCostStr}</div>
-            </div>
+            <div class="calc-result-name">${name}</div>
           </div>
-          <div class="calc-result-center">
-            <div class="calc-result-cost">${formatCost(costPerExchange)}</div>
-            <div class="calc-result-per">per exchange</div>
-          </div>
-          <div class="calc-result-right">
-            <div class="calc-result-exchanges">${Math.floor(exchangesOnBudget).toLocaleString()} exchanges</div>
+          <div class="calc-result-rates">${inputCostStr} in &nbsp;·&nbsp; ${outputCostStr} out</div>
+          <hr class="calc-result-divider">
+          <div class="calc-result-cost">${formatCost(costPerExchange)}</div>
+          <div class="calc-result-per">per exchange</div>
+          <div class="calc-result-footer">
+            <span class="calc-result-exchanges">${Math.floor(exchangesOnBudget).toLocaleString()} exchanges</span>
             <span class="calc-days-badge ${badgeClass}">${formatDays(daysOfBudget)} days</span>
           </div>
         </div>`;

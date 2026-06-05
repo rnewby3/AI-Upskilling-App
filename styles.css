@@ -1689,8 +1689,8 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
 }
 
 .calc-result-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: .6rem;
 }
 
@@ -1698,18 +1698,19 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  padding: .7rem 1rem;
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 1rem;
-  align-items: center;
+  padding: .75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  flex: 1 1 200px;
+  min-width: 180px;
+  max-width: 280px;
 }
 
 .calc-result-left {
   display: flex;
   align-items: center;
-  gap: .5rem;
-  min-width: 0;
+  gap: .4rem;
 }
 
 .calc-vendor-dot {
@@ -1723,23 +1724,26 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
   font-size: .85rem;
   font-weight: 600;
   color: var(--ink);
+  white-space: nowrap;
 }
 
 .calc-result-rates {
   font-size: .68rem;
   color: var(--ink-3);
-  margin-top: .1rem;
 }
 
-.calc-result-center {
-  text-align: center;
+.calc-result-divider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: .2rem 0;
 }
 
 .calc-result-cost {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--ink);
   font-family: "Space Grotesk", sans-serif;
+  line-height: 1;
 }
 
 .calc-result-per {
@@ -1749,12 +1753,16 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
   letter-spacing: .05em;
 }
 
-.calc-result-right {
-  text-align: right;
+.calc-result-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .4rem;
+  margin-top: .1rem;
 }
 
 .calc-result-exchanges {
-  font-size: .8rem;
+  font-size: .75rem;
   font-weight: 600;
   color: var(--ink-2);
 }
