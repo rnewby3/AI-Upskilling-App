@@ -1769,6 +1769,7 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
   white-space: nowrap;
   flex-shrink: 0;
   font-size: .82rem;
+  align-self: center;
 }
 
 /* Reference guide modal overlay */
@@ -1848,6 +1849,12 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
 .calc-compare-sub {
   font-size: .75rem;
   color: var(--ink-3);
+}
+
+.calc-rate-cell {
+  font-size: .8rem;
+  color: var(--ink-3);
+  white-space: nowrap;
 }
 
 .calc-model-dot {

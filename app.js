@@ -7703,6 +7703,7 @@ function initCalculator() {
     document.querySelectorAll('.calc-scenario-card').forEach(c => c.classList.remove('active'));
     if (activeLabel) activeLabel.classList.add('hidden');
     if (respNoteOverride) respNoteOverride.style.display = 'none';
+    if (textarea) textarea.style.display = '';
     document.querySelectorAll('.calc-resp-btn').forEach(b => b.disabled = false);
   }
 
@@ -7846,6 +7847,7 @@ function initCalculator() {
           activeLabel.classList.remove('hidden');
         }
         if (respNoteOverride) respNoteOverride.style.display = 'block';
+        if (textarea) textarea.style.display = 'none';
         document.querySelectorAll('.calc-resp-btn').forEach(b => b.disabled = true);
       }
       recalculate();
