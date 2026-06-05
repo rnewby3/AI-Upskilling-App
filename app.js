@@ -7644,6 +7644,12 @@ const MG_RECS = {
 
 const MG_TIER_COLORS = { flagship: '#CC785C', balanced: '#4f46e5', fast: '#16a34a' };
 
+const MG_TIER_SKIP = {
+  fast:     ['Multi-step reasoning or complex analysis', 'High-stakes decisions where errors carry real cost', 'Tasks requiring deep synthesis across many sources'],
+  balanced: ['High-volume repetitive tasks — Fast is cheaper and just as good', 'Real-time chat at scale where latency matters', 'The most complex reasoning work that genuinely needs Flagship depth'],
+  flagship: ['Email drafting, simple writing, or basic summarization', 'High-volume processing where speed and cost matter', 'Routine Q&A or formatting tasks'],
+};
+
 const VENDOR_TIER_MODEL = {
   claude:  { flagship: 'Opus 4.7',       balanced: 'Sonnet 4.6',     fast: 'Haiku 4.5' },
   openai:  { flagship: 'GPT-5.5',        balanced: 'GPT-5.4',        fast: 'GPT-5.2' },
@@ -7689,7 +7695,11 @@ function initModelGuide() {
     const modelName = VENDOR_TIER_MODEL[vendor]?.[rec.tier] || '';
     const modelTag = modelName ? `<span class="mg-rec-model-tag">→ ${modelName}</span>` : '';
     const examplesHtml = rec.examples && rec.examples.length
-      ? `<ul class="mg-rec-examples">${rec.examples.map(e => `<li>${e}</li>`).join('')}</ul>`
+      ? `<div class="mg-rec-section-label">Good for</div><ul class="mg-rec-examples">${rec.examples.map(e => `<li>${e}</li>`).join('')}</ul>`
+      : '';
+    const skipItems = MG_TIER_SKIP[rec.tier] || [];
+    const skipHtml = skipItems.length
+      ? `<div class="mg-rec-section-label mg-rec-skip-label">Skip when</div><ul class="mg-rec-skip">${skipItems.map(s => `<li>${s}</li>`).join('')}</ul>`
       : '';
     div.innerHTML = `
       <div class="mg-rec-card" style="border-left-color:${color}">
@@ -7700,6 +7710,7 @@ function initModelGuide() {
         <div class="mg-rec-headline">${rec.headline}</div>
         <div class="mg-rec-reason">${rec.reason}</div>
         ${examplesHtml}
+        ${skipHtml}
       </div>`;
   }
 

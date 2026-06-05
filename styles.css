@@ -2455,6 +2455,15 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
 }
 
 /* Rec examples list */
+.mg-rec-section-label {
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--ink-3);
+  margin-top: .6rem;
+}
+
 .mg-rec-examples {
   list-style: none;
   padding: 0;
@@ -2478,6 +2487,33 @@ label { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
   left: 0;
   font-size: .72rem;
   color: var(--ink-3);
+}
+
+.mg-rec-skip {
+  list-style: none;
+  padding: 0;
+  margin: .2rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+
+.mg-rec-skip li {
+  font-size: .8rem;
+  color: var(--ink-3);
+  padding-left: 1rem;
+  position: relative;
+  line-height: 1.4;
+  opacity: .75;
+}
+
+.mg-rec-skip li::before {
+  content: "✕";
+  position: absolute;
+  left: 0;
+  font-size: .65rem;
+  color: #ef4444;
+  line-height: 1.6;
 }
 
 @media (max-width: 840px) {
