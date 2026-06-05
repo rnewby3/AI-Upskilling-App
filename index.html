@@ -245,7 +245,7 @@
       <span class="detail-breadcrumb"><button class="breadcrumb-home" data-goto="home">Home</button> › Token Cost Calculator</span>
     </div>
 
-    <section class="page-header">
+    <section class="page-header" style="margin-bottom:1rem">
       <div>
         <h2>Token Cost Calculator</h2>
         <p class="page-sub">Understand the real cost difference between AI models before your budget runs out.</p>
@@ -259,21 +259,61 @@
 
         <!-- Card 1: Your Prompt -->
         <div class="calc-card">
-          <h4 class="calc-card-title">Your Prompt</h4>
+          <div class="calc-card-header">
+            <h4 class="calc-card-title">Your Prompt</h4>
+            <div class="calc-stats-bar">
+              <span class="calc-stat"><span id="calc-stat-tokens">0</span> <span class="calc-stat-label">tokens</span></span>
+              <span class="calc-stat-divider">·</span>
+              <span class="calc-stat"><span id="calc-stat-words">0</span> <span class="calc-stat-label">words</span></span>
+              <span class="calc-stat-divider">·</span>
+              <span class="calc-stat"><span id="calc-stat-chars">0</span> <span class="calc-stat-label">chars</span></span>
+            </div>
+          </div>
+
+          <!-- Text presets -->
+          <div class="calc-section-label">Quick prompts</div>
           <div class="calc-presets">
             <button class="calc-preset-btn" data-preset="simple">Simple Q&amp;A</button>
             <button class="calc-preset-btn" data-preset="email">Email Rewrite</button>
             <button class="calc-preset-btn" data-preset="doc">Document Summary</button>
             <button class="calc-preset-btn" data-preset="policy">Policy Analysis</button>
           </div>
-          <textarea id="calc-input" rows="6" placeholder="Type or paste your prompt here..."></textarea>
-          <div class="calc-stats-bar">
-            <span class="calc-stat"><span id="calc-stat-tokens">0</span> <span class="calc-stat-label">TOKENS</span></span>
-            <span class="calc-stat-divider">·</span>
-            <span class="calc-stat"><span id="calc-stat-words">0</span> <span class="calc-stat-label">WORDS</span></span>
-            <span class="calc-stat-divider">·</span>
-            <span class="calc-stat"><span id="calc-stat-chars">0</span> <span class="calc-stat-label">CHARACTERS</span></span>
+
+          <!-- Scenario cards -->
+          <div class="calc-section-label">Real-world C-suite scenarios <span class="calc-section-note">— pre-set input &amp; response tokens</span></div>
+          <div class="calc-scenarios">
+            <button class="calc-scenario-card" data-input-tokens="6000" data-output-tokens="12000">
+              <span class="calc-scenario-icon">📊</span>
+              <div class="calc-scenario-body">
+                <div class="calc-scenario-name">90-Slide Board Deck</div>
+                <div class="calc-scenario-tokens">6,000 in · 12,000 out</div>
+              </div>
+            </button>
+            <button class="calc-scenario-card" data-input-tokens="14000" data-output-tokens="4500">
+              <span class="calc-scenario-icon">📈</span>
+              <div class="calc-scenario-body">
+                <div class="calc-scenario-name">HTML Dashboard (3 Excels)</div>
+                <div class="calc-scenario-tokens">14,000 in · 4,500 out</div>
+              </div>
+            </button>
+            <button class="calc-scenario-card" data-input-tokens="8000" data-output-tokens="2000">
+              <span class="calc-scenario-icon">📄</span>
+              <div class="calc-scenario-body">
+                <div class="calc-scenario-name">Contract Review</div>
+                <div class="calc-scenario-tokens">8,000 in · 2,000 out</div>
+              </div>
+            </button>
+            <button class="calc-scenario-card" data-input-tokens="5000" data-output-tokens="1500">
+              <span class="calc-scenario-icon">📋</span>
+              <div class="calc-scenario-body">
+                <div class="calc-scenario-name">Meeting Transcript</div>
+                <div class="calc-scenario-tokens">5,000 in · 1,500 out</div>
+              </div>
+            </button>
           </div>
+          <div id="calc-scenario-active-label" class="calc-scenario-active-label hidden"></div>
+
+          <textarea id="calc-input" rows="5" placeholder="Or type / paste your own prompt here..."></textarea>
         </div>
 
         <!-- Card 2: Response Length -->
@@ -282,13 +322,14 @@
           <div class="calc-response-btns">
             <button class="calc-resp-btn" data-tokens="150">Short<span class="calc-resp-sub">150 tokens</span></button>
             <button class="calc-resp-btn active" data-tokens="500">Medium<span class="calc-resp-sub">500 tokens</span></button>
-            <button class="calc-resp-btn" data-tokens="1200">Long<span class="calc-resp-sub">1200 tokens</span></button>
+            <button class="calc-resp-btn" data-tokens="1200">Long<span class="calc-resp-sub">1,200 tokens</span></button>
             <button class="calc-resp-btn" data-tokens="custom">Custom<span class="calc-resp-sub">enter tokens</span></button>
           </div>
           <div id="calc-response-custom-wrap" class="calc-custom-wrap hidden">
-            <input type="number" id="calc-response-custom" placeholder="e.g. 800" min="1" max="100000" />
+            <input type="number" id="calc-response-custom" placeholder="e.g. 800" min="1" max="200000" />
             <span class="calc-custom-label">tokens</span>
           </div>
+          <p class="calc-resp-note" id="calc-resp-note-override" style="display:none">Response length is set by the active scenario — deselect to override.</p>
         </div>
 
       </div><!-- /calc-left -->
@@ -299,53 +340,75 @@
         <!-- Card 3: Models -->
         <div class="calc-card">
           <h4 class="calc-card-title">Models</h4>
-          <div class="calc-vendor-section">
+
+          <div class="calc-vendor-group">
             <div class="calc-vendor-label" style="--vendor-color:#CC785C">Claude</div>
-            <div class="calc-chips" data-vendor="claude">
-              <button class="calc-chip active" data-model="claude-haiku-3" data-input="0.25" data-output="1.25" style="--chip-color:#CC785C">Claude 3 Haiku<span class="calc-chip-price">$0.25 / $1.25</span></button>
-              <button class="calc-chip active" data-model="claude-haiku-35" data-input="0.80" data-output="4.00" style="--chip-color:#CC785C">Claude 3.5 Haiku<span class="calc-chip-price">$0.80 / $4.00</span></button>
-              <button class="calc-chip active" data-model="claude-sonnet-4" data-input="3.00" data-output="15.00" style="--chip-color:#CC785C">Claude Sonnet 4<span class="calc-chip-price">$3.00 / $15.00</span></button>
-              <button class="calc-chip active" data-model="claude-opus-4" data-input="15.00" data-output="75.00" style="--chip-color:#CC785C">Claude Opus 4<span class="calc-chip-price">$15.00 / $75.00</span></button>
+            <div class="calc-chips">
+              <button class="calc-chip active" data-model="claude-haiku-3" data-input="0.25" data-output="1.25" style="--chip-color:#CC785C">
+                <span class="calc-chip-name">Claude 3 Haiku</span><span class="calc-chip-price">$0.25/$1.25</span>
+              </button>
+              <button class="calc-chip active" data-model="claude-haiku-35" data-input="0.80" data-output="4.00" style="--chip-color:#CC785C">
+                <span class="calc-chip-name">Claude 3.5 Haiku</span><span class="calc-chip-price">$0.80/$4.00</span>
+              </button>
+              <button class="calc-chip active" data-model="claude-sonnet-4" data-input="3.00" data-output="15.00" style="--chip-color:#CC785C">
+                <span class="calc-chip-name">Claude Sonnet 4</span><span class="calc-chip-price">$3.00/$15.00</span>
+              </button>
+              <button class="calc-chip active" data-model="claude-opus-4" data-input="15.00" data-output="75.00" style="--chip-color:#CC785C">
+                <span class="calc-chip-name">Claude Opus 4</span><span class="calc-chip-price">$15.00/$75.00</span>
+              </button>
             </div>
           </div>
-          <div class="calc-vendor-section">
-            <div class="calc-vendor-label" style="--vendor-color:#111111">OpenAI</div>
-            <div class="calc-chips" data-vendor="openai">
-              <button class="calc-chip" data-model="gpt-4o-mini" data-input="0.15" data-output="0.60" style="--chip-color:#111111">GPT-4o mini<span class="calc-chip-price">$0.15 / $0.60</span></button>
-              <button class="calc-chip" data-model="gpt-4o" data-input="2.50" data-output="10.00" style="--chip-color:#111111">GPT-4o<span class="calc-chip-price">$2.50 / $10.00</span></button>
+
+          <div class="calc-vendor-group">
+            <div class="calc-vendor-label" style="--vendor-color:#111">OpenAI</div>
+            <div class="calc-chips">
+              <button class="calc-chip" data-model="gpt-4o-mini" data-input="0.15" data-output="0.60" style="--chip-color:#111">
+                <span class="calc-chip-name">GPT-4o mini</span><span class="calc-chip-price">$0.15/$0.60</span>
+              </button>
+              <button class="calc-chip" data-model="gpt-4o" data-input="2.50" data-output="10.00" style="--chip-color:#111">
+                <span class="calc-chip-name">GPT-4o</span><span class="calc-chip-price">$2.50/$10.00</span>
+              </button>
             </div>
           </div>
-          <div class="calc-vendor-section">
+
+          <div class="calc-vendor-group">
             <div class="calc-vendor-label" style="--vendor-color:#4285F4">Google</div>
-            <div class="calc-chips" data-vendor="google">
-              <button class="calc-chip" data-model="gemini-flash-2" data-input="0.10" data-output="0.40" style="--chip-color:#4285F4">Gemini 2.0 Flash<span class="calc-chip-price">$0.10 / $0.40</span></button>
-              <button class="calc-chip" data-model="gemini-pro-15" data-input="1.25" data-output="5.00" style="--chip-color:#4285F4">Gemini 1.5 Pro<span class="calc-chip-price">$1.25 / $5.00</span></button>
+            <div class="calc-chips">
+              <button class="calc-chip" data-model="gemini-flash-2" data-input="0.10" data-output="0.40" style="--chip-color:#4285F4">
+                <span class="calc-chip-name">Gemini 2.0 Flash</span><span class="calc-chip-price">$0.10/$0.40</span>
+              </button>
+              <button class="calc-chip" data-model="gemini-pro-15" data-input="1.25" data-output="5.00" style="--chip-color:#4285F4">
+                <span class="calc-chip-name">Gemini 1.5 Pro</span><span class="calc-chip-price">$1.25/$5.00</span>
+              </button>
             </div>
           </div>
-          <p class="calc-chip-hint">Per 1M tokens (input / output). Click to toggle.</p>
+
+          <p class="calc-chip-hint">Per 1M tokens (input/output). Click to toggle.</p>
         </div>
 
-        <!-- Card 4: Monthly Budget -->
+        <!-- Card 4: Budget + Daily (merged) -->
         <div class="calc-card">
-          <h4 class="calc-card-title">Monthly Budget</h4>
-          <div class="calc-budget-btns">
-            <button class="calc-budget-btn active" data-budget="50">$50</button>
-            <button class="calc-budget-btn" data-budget="100">$100</button>
-            <button class="calc-budget-btn" data-budget="200">$200</button>
-            <button class="calc-budget-btn" data-budget="custom">Custom</button>
-          </div>
-          <div id="calc-budget-custom-wrap" class="calc-custom-wrap hidden">
-            <span class="calc-custom-label">$</span>
-            <input type="number" id="calc-budget-custom" placeholder="e.g. 500" min="1" />
-          </div>
-        </div>
-
-        <!-- Card 5: Daily Prompts -->
-        <div class="calc-card">
-          <h4 class="calc-card-title">Daily Prompts</h4>
-          <div class="calc-daily-row">
-            <input type="number" id="calc-daily" value="30" min="1" max="10000" />
-            <span class="calc-daily-label">Estimated exchanges per day</span>
+          <div class="calc-budget-daily-row">
+            <div class="calc-budget-section">
+              <h4 class="calc-card-title">Monthly Budget</h4>
+              <div class="calc-budget-btns">
+                <button class="calc-budget-btn active" data-budget="50">$50</button>
+                <button class="calc-budget-btn" data-budget="100">$100</button>
+                <button class="calc-budget-btn" data-budget="200">$200</button>
+                <button class="calc-budget-btn" data-budget="custom">Custom</button>
+              </div>
+              <div id="calc-budget-custom-wrap" class="calc-custom-wrap hidden">
+                <span class="calc-custom-label">$</span>
+                <input type="number" id="calc-budget-custom" placeholder="e.g. 500" min="1" />
+              </div>
+            </div>
+            <div class="calc-daily-section">
+              <h4 class="calc-card-title">Daily Exchanges</h4>
+              <div class="calc-daily-row">
+                <input type="number" id="calc-daily" value="30" min="1" max="10000" />
+                <span class="calc-daily-label">per day</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -360,36 +423,29 @@
     <div class="calc-reference">
       <h3 class="calc-reference-title">Token Reference Guide</h3>
       <div class="calc-ref-grid">
-        <div class="calc-ref-row calc-ref-header">
-          <span>Example Text</span>
-          <span>~Tokens</span>
-        </div>
+        <div class="calc-ref-row calc-ref-header"><span>Example</span><span>~Tokens</span></div>
         <div class="calc-ref-row"><span>"Hello"</span><span>1</span></div>
         <div class="calc-ref-row"><span>"Hello, how can I help you today?"</span><span>~8</span></div>
-        <div class="calc-ref-row"><span>"Write a short paragraph about…"</span><span>~8 + content</span></div>
         <div class="calc-ref-row"><span>A typical sentence (15 words)</span><span>~20</span></div>
         <div class="calc-ref-row"><span>A paragraph (100 words)</span><span>~133</span></div>
         <div class="calc-ref-row"><span>A page of text (500 words)</span><span>~667</span></div>
         <div class="calc-ref-row"><span>A 10-page document</span><span>~3,300</span></div>
+        <div class="calc-ref-row"><span>90-slide board deck (text content)</span><span>~6,000</span></div>
+        <div class="calc-ref-row"><span>3 Excel files as CSV data</span><span>~14,000</span></div>
       </div>
-      <p class="calc-ref-note">Token estimates use the cl100k_base approximation (~4 characters per token for English text).</p>
+      <p class="calc-ref-note">~4 characters per token (cl100k_base approximation for English text).</p>
 
       <h4 class="calc-ref-compare-title">Claude Model Cost Comparison — Same Prompt</h4>
       <div class="calc-ref-table-wrap">
         <table class="calc-ref-table" id="calc-ref-comparison">
           <thead>
-            <tr>
-              <th>Model</th>
-              <th>Input Rate</th>
-              <th>Output Rate</th>
-              <th>Cost / 500-token exchange</th>
-            </tr>
+            <tr><th>Model</th><th>Input Rate</th><th>Output Rate</th><th>Cost / exchange</th></tr>
           </thead>
           <tbody>
-            <tr><td>Claude 3 Haiku</td><td>$0.25 / 1M</td><td>$1.25 / 1M</td><td id="cref-haiku3">—</td></tr>
-            <tr><td>Claude 3.5 Haiku</td><td>$0.80 / 1M</td><td>$4.00 / 1M</td><td id="cref-haiku35">—</td></tr>
-            <tr><td>Claude Sonnet 4</td><td>$3.00 / 1M</td><td>$15.00 / 1M</td><td id="cref-sonnet4">—</td></tr>
-            <tr><td>Claude Opus 4</td><td>$15.00 / 1M</td><td>$75.00 / 1M</td><td id="cref-opus4">—</td></tr>
+            <tr><td>Claude 3 Haiku</td><td>$0.25/1M</td><td>$1.25/1M</td><td id="cref-haiku3">—</td></tr>
+            <tr><td>Claude 3.5 Haiku</td><td>$0.80/1M</td><td>$4.00/1M</td><td id="cref-haiku35">—</td></tr>
+            <tr><td>Claude Sonnet 4</td><td>$3.00/1M</td><td>$15.00/1M</td><td id="cref-sonnet4">—</td></tr>
+            <tr><td>Claude Opus 4</td><td>$15.00/1M</td><td>$75.00/1M</td><td id="cref-opus4">—</td></tr>
           </tbody>
         </table>
       </div>

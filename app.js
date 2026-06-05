@@ -7620,191 +7620,163 @@ function initAssessment() {
   renderAssessIntro();
 }
 
-// ─── TOKEN COST CALCULATOR ────────────────────────────────────
-
-const CALC_PRESETS = {
-  simple: `What are the three most important things a Chief AI Officer should focus on in their first 90 days on the job?`,
-  email: `Please rewrite the following email to sound more professional and concise:\n\nHey team,\n\nSo I wanted to touch base about the AI project we've been discussing. I know we've had a lot of meetings about it and things have been going back and forth but I think we really need to make a decision soon. The vendor is asking us for an answer by the end of the month and I don't want us to lose the opportunity. Can everyone let me know their thoughts by EOD Thursday?\n\nThanks`,
-  doc: `Please provide an executive summary of the following AI governance policy document. Include key policy points, implementation timelines, risk categories addressed, and recommended action items for department heads.\n\n[POLICY DOCUMENT — approximately 1,200 words of content representing a corporate AI governance framework document covering data classification, approved tool lists, prohibited use cases, incident reporting procedures, and employee training requirements. This sample prompt represents the typical length of a document summarization request.]`,
-  policy: `Analyze the following AI use policy for a mid-sized insurance company and identify: (1) gaps in data classification, (2) unaddressed risks, (3) specific improvements to the governance framework, and (4) gaps relative to NIST AI RMF and ISO 42001 standards.\n\nCOMPANY AI POLICY v1.2\n\nSection 1: Purpose\nThis policy establishes guidelines for AI tool usage across the organization. It applies to all employees, contractors, and third parties.\n\nSection 2: Approved Tools\nEmployees may only use IT Security-approved AI tools. Current approved tools: Microsoft Copilot (M365), Glean (enterprise search), GitHub Copilot (engineering only).\n\nSection 3: Prohibited Uses\nProhibited: processing confidential client data, generating official external communications without review, autonomous HR decisions.\n\nSection 4: Data Handling\nExercise caution when sharing sensitive information. When in doubt, do not share.\n\nSection 5: Violations\nViolations may result in disciplinary action up to and including termination.`
-};
-
+// ─── CALCULATOR ─────────────────────────────────────────────
 function estimateTokens(text) {
   if (!text || !text.trim()) return 0;
   return Math.max(1, Math.ceil(text.length / 4));
 }
 
 function formatCost(n) {
-  if (n < 0.001) return "$" + n.toFixed(6);
-  if (n < 0.01)  return "$" + n.toFixed(4);
-  if (n < 1)     return "$" + n.toFixed(4);
-  return "$" + n.toFixed(2);
+  if (n === 0) return '$0.00';
+  if (n < 0.000001) return '$' + n.toFixed(8);
+  if (n < 0.0001) return '$' + n.toFixed(6);
+  if (n < 0.01) return '$' + n.toFixed(4);
+  if (n < 1) return '$' + n.toFixed(4);
+  return '$' + n.toFixed(2);
 }
 
 function formatDays(d) {
-  if (d < 10) return d.toFixed(1);
-  return Math.round(d).toLocaleString();
+  if (d >= 100) return Math.round(d).toLocaleString();
+  if (d >= 10) return Math.round(d).toString();
+  return d.toFixed(1);
 }
 
-function daysBadgeClass(days) {
-  if (days > 14) return "calc-days-green";
-  if (days >= 7)  return "calc-days-yellow";
-  if (days >= 3)  return "calc-days-orange";
-  return "calc-days-red";
+function daysBadgeClass(d) {
+  if (d > 14) return 'calc-days-green';
+  if (d > 7) return 'calc-days-yellow';
+  if (d > 3) return 'calc-days-orange';
+  return 'calc-days-red';
 }
+
+const CALC_PRESETS = {
+  simple: 'What are the three most important things a Chief AI Officer should focus on in their first 90 days on the job?',
+  email: 'Please rewrite the following email to sound more professional and concise:\n\nHey team,\n\nSo I wanted to touch base about the AI project we\'ve been discussing. I know we\'ve had a lot of meetings about it and things have been going back and forth but I think we really need to make a decision soon. The vendor is asking us for an answer by the end of the month and I don\'t want us to lose the opportunity. Can everyone let me know their thoughts by EOD Thursday?\n\nThanks',
+  doc: 'Please provide an executive summary of the following AI governance policy document. Include key policy points, implementation timelines, risk categories addressed, and recommended action items for department heads.\n\n[POLICY DOCUMENT — approximately 1,200 words of content representing a corporate AI governance framework document covering data classification, approved tool lists, prohibited use cases, incident reporting procedures, and employee training requirements. This sample prompt represents the typical length of a document summarization request.]',
+  policy: 'Analyze the following AI use policy for a mid-sized insurance company and identify: (1) gaps in data classification, (2) unaddressed risks, (3) specific improvements to the governance framework, and (4) gaps relative to NIST AI RMF and ISO 42001 standards.\n\nCOMPANY AI POLICY v1.2\n\nSection 1: Purpose\nThis policy establishes guidelines for AI tool usage across the organization. It applies to all employees, contractors, and third parties.\n\nSection 2: Approved Tools\nEmployees may only use IT Security-approved AI tools. Current approved tools: Microsoft Copilot (M365), Glean (enterprise search), GitHub Copilot (engineering only).\n\nSection 3: Prohibited Uses\nProhibited: processing confidential client data, generating official external communications without review, autonomous HR decisions.\n\nSection 4: Data Handling\nExercise caution when sharing sensitive information. When in doubt, do not share.\n\nSection 5: Violations\nViolations may result in disciplinary action up to and including termination.'
+};
+
+const SCENARIO_LABELS = {
+  '6000-12000': '90-Slide Board Deck — 6,000 input tokens + 12,000 response tokens',
+  '14000-4500': 'HTML Dashboard (3 Excels) — 14,000 input tokens + 4,500 response tokens',
+  '8000-2000': 'Contract Review — 8,000 input tokens + 2,000 response tokens',
+  '5000-1500': 'Meeting Transcript — 5,000 input tokens + 1,500 response tokens',
+};
 
 function initCalculator() {
-  const view = document.getElementById("view-calculator");
-  if (!view) return;
+  let scenarioOverride = { inputTokens: null, outputTokens: null };
 
-  // State
-  let responseTokens = 500;
-  let budget = 50;
-  let dailyPrompts = 30;
+  const textarea = document.getElementById('calc-input');
+  const resultsDiv = document.getElementById('calc-results');
+  const activeLabel = document.getElementById('calc-scenario-active-label');
+  const respNoteOverride = document.getElementById('calc-resp-note-override');
 
-  // ── Preset buttons
-  view.querySelectorAll(".calc-preset-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const textarea = document.getElementById("calc-input");
-      if (textarea) {
-        textarea.value = CALC_PRESETS[btn.dataset.preset] || "";
-        textarea.dispatchEvent(new Event("input"));
-      }
-    });
-  });
-
-  // ── Textarea live stats
-  const textarea = document.getElementById("calc-input");
-  if (textarea) {
-    textarea.addEventListener("input", () => {
-      const val = textarea.value;
-      document.getElementById("calc-stat-tokens").textContent = estimateTokens(val).toLocaleString();
-      const words = val.trim() ? val.trim().split(/\s+/).length : 0;
-      document.getElementById("calc-stat-words").textContent = words.toLocaleString();
-      document.getElementById("calc-stat-chars").textContent = val.length.toLocaleString();
-      recompute();
-    });
+  function getInputTokens() {
+    if (scenarioOverride.inputTokens !== null) return scenarioOverride.inputTokens;
+    return estimateTokens(textarea?.value || '');
   }
 
-  // ── Response length buttons
-  view.querySelectorAll(".calc-resp-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      view.querySelectorAll(".calc-resp-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      const customWrap = document.getElementById("calc-response-custom-wrap");
-      if (btn.dataset.tokens === "custom") {
-        customWrap?.classList.remove("hidden");
-        const customInput = document.getElementById("calc-response-custom");
-        responseTokens = parseInt(customInput?.value) || 500;
-      } else {
-        customWrap?.classList.add("hidden");
-        responseTokens = parseInt(btn.dataset.tokens) || 500;
-      }
-      recompute();
-    });
-  });
+  function getResponseTokens() {
+    if (scenarioOverride.outputTokens !== null) return scenarioOverride.outputTokens;
+    const activeBtn = document.querySelector('.calc-resp-btn.active');
+    if (!activeBtn) return 500;
+    const t = activeBtn.dataset.tokens;
+    if (t === 'custom') {
+      const v = parseInt(document.getElementById('calc-response-custom')?.value, 10);
+      return isNaN(v) || v < 1 ? 500 : v;
+    }
+    return parseInt(t, 10) || 500;
+  }
 
-  document.getElementById("calc-response-custom")?.addEventListener("input", (e) => {
-    responseTokens = parseInt(e.target.value) || 0;
-    recompute();
-  });
+  function updateStatsBar() {
+    const text = textarea?.value || '';
+    const tokens = scenarioOverride.inputTokens !== null ? scenarioOverride.inputTokens : estimateTokens(text);
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const chars = text.length;
+    const el = (id) => document.getElementById(id);
+    if (el('calc-stat-tokens')) el('calc-stat-tokens').textContent = tokens.toLocaleString();
+    if (el('calc-stat-words')) el('calc-stat-words').textContent = scenarioOverride.inputTokens !== null ? '—' : words.toLocaleString();
+    if (el('calc-stat-chars')) el('calc-stat-chars').textContent = scenarioOverride.inputTokens !== null ? '—' : chars.toLocaleString();
+  }
 
-  // ── Model chips
-  view.querySelectorAll(".calc-chip").forEach(chip => {
-    chip.addEventListener("click", () => {
-      chip.classList.toggle("active");
-      recompute();
-    });
-  });
+  function clearScenario() {
+    scenarioOverride = { inputTokens: null, outputTokens: null };
+    document.querySelectorAll('.calc-scenario-card').forEach(c => c.classList.remove('active'));
+    if (activeLabel) activeLabel.classList.add('hidden');
+    if (respNoteOverride) respNoteOverride.style.display = 'none';
+    document.querySelectorAll('.calc-resp-btn').forEach(b => b.disabled = false);
+  }
 
-  // ── Budget buttons
-  view.querySelectorAll(".calc-budget-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      view.querySelectorAll(".calc-budget-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      const customWrap = document.getElementById("calc-budget-custom-wrap");
-      if (btn.dataset.budget === "custom") {
-        customWrap?.classList.remove("hidden");
-        const customInput = document.getElementById("calc-budget-custom");
-        budget = parseFloat(customInput?.value) || 50;
-      } else {
-        customWrap?.classList.add("hidden");
-        budget = parseFloat(btn.dataset.budget) || 50;
-      }
-      recompute();
-    });
-  });
-
-  document.getElementById("calc-budget-custom")?.addEventListener("input", (e) => {
-    budget = parseFloat(e.target.value) || 0;
-    recompute();
-  });
-
-  // ── Daily prompts
-  document.getElementById("calc-daily")?.addEventListener("input", (e) => {
-    dailyPrompts = parseInt(e.target.value) || 1;
-    recompute();
-  });
-
-  // ── Back button
-  document.getElementById("calc-back-btn")?.addEventListener("click", () => showView("home"));
-
-  // ── Update reference table with static 100-token input + 500-token output
-  updateRefTable(100, 500);
-
-  function recompute() {
-    const inputText = document.getElementById("calc-input")?.value || "";
-    const inputTokens = estimateTokens(inputText);
-
-    // Update ref table to use current input tokens if available
-    const refInput = inputTokens > 0 ? inputTokens : 100;
-    const refOutput = responseTokens > 0 ? responseTokens : 500;
-    updateRefTable(refInput, refOutput);
-
-    const resultsDiv = document.getElementById("calc-results");
+  function recalculate() {
+    updateStatsBar();
+    const inputTokens = getInputTokens();
+    const responseTokens = getResponseTokens();
     if (!resultsDiv) return;
 
-    if (inputTokens === 0) {
-      resultsDiv.innerHTML = "";
+    const budget = (() => {
+      const active = document.querySelector('.calc-budget-btn.active');
+      if (!active) return 50;
+      const v = active.dataset.budget;
+      if (v === 'custom') {
+        const n = parseFloat(document.getElementById('calc-budget-custom')?.value);
+        return isNaN(n) || n <= 0 ? 50 : n;
+      }
+      return parseFloat(v) || 50;
+    })();
+
+    const dailyPrompts = (() => {
+      const v = parseInt(document.getElementById('calc-daily')?.value, 10);
+      return isNaN(v) || v < 1 ? 30 : v;
+    })();
+
+    const enabledChips = [...document.querySelectorAll('.calc-chip.active')];
+    if (inputTokens === 0 || enabledChips.length === 0) {
+      resultsDiv.innerHTML = '';
       return;
     }
 
-    // Get enabled models
-    const enabledChips = Array.from(view.querySelectorAll(".calc-chip.active"));
-    if (enabledChips.length === 0) {
-      resultsDiv.innerHTML = `<div class="calc-no-models">Select at least one model to see results.</div>`;
-      return;
-    }
+    // Update reference table
+    const refInputTokens = inputTokens;
+    const refResponseTokens = responseTokens;
+    [
+      { id: 'cref-haiku3', inp: 0.25, out: 1.25 },
+      { id: 'cref-haiku35', inp: 0.80, out: 4.00 },
+      { id: 'cref-sonnet4', inp: 3.00, out: 15.00 },
+      { id: 'cref-opus4', inp: 15.00, out: 75.00 },
+    ].forEach(({ id, inp, out }) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const cost = (refInputTokens * inp + refResponseTokens * out) / 1_000_000;
+      el.textContent = formatCost(cost);
+    });
 
-    const currentDailyPrompts = parseInt(document.getElementById("calc-daily")?.value) || dailyPrompts;
-
-    // Build results
-    let cardsHtml = "";
     const warnings = [];
-
-    enabledChips.forEach(chip => {
-      const name = chip.childNodes[0].textContent.trim();
-      const inputRate = parseFloat(chip.dataset.input);
-      const outputRate = parseFloat(chip.dataset.output);
-      const color = chip.style.getPropertyValue("--chip-color") || "#4f46e5";
+    const cards = enabledChips.map(chip => {
+      const name = chip.querySelector('.calc-chip-name')?.textContent || chip.textContent.split('$')[0].trim();
+      const inputRate = parseFloat(chip.dataset.input) || 0;
+      const outputRate = parseFloat(chip.dataset.output) || 0;
+      const color = chip.style.getPropertyValue('--chip-color') || '#4f46e5';
 
       const costPerExchange = (inputTokens * inputRate + responseTokens * outputRate) / 1_000_000;
-      if (costPerExchange <= 0) return;
+      if (costPerExchange <= 0) return '';
 
       const exchangesOnBudget = budget / costPerExchange;
-      const daysOfBudget = exchangesOnBudget / currentDailyPrompts;
+      const daysOfBudget = exchangesOnBudget / dailyPrompts;
       const badgeClass = daysBadgeClass(daysOfBudget);
 
-      const inputCostStr = formatCost(inputTokens * inputRate / 1_000_000);
-      const outputCostStr = formatCost(responseTokens * outputRate / 1_000_000);
+      const inputCostStr = '$' + (inputRate / 1000).toFixed(inputRate < 1 ? 5 : 4) + '/1K';
+      const outputCostStr = '$' + (outputRate / 1000).toFixed(outputRate < 1 ? 5 : 4) + '/1K';
 
-      cardsHtml += `
+      if (daysOfBudget < 5) {
+        warnings.push({ name, days: daysOfBudget, color, budget, dailyPrompts });
+      }
+
+      return `
         <div class="calc-result-card">
           <div class="calc-result-left">
-            <span class="calc-vendor-dot" style="background:${color}"></span>
+            <div class="calc-vendor-dot" style="background:${color}"></div>
             <div>
               <div class="calc-result-name">${name}</div>
-              <div class="calc-result-rates">Input: ${inputCostStr} &nbsp;·&nbsp; Output: ${outputCostStr}</div>
+              <div class="calc-result-rates">In: ${inputCostStr} &nbsp;·&nbsp; Out: ${outputCostStr}</div>
             </div>
           </div>
           <div class="calc-result-center">
@@ -7816,48 +7788,109 @@ function initCalculator() {
             <span class="calc-days-badge ${badgeClass}">${formatDays(daysOfBudget)} days</span>
           </div>
         </div>`;
+    }).filter(Boolean).join('');
 
-      if (daysOfBudget < 5) {
-        warnings.push({ name, days: daysOfBudget, color });
-      }
-    });
-
-    let warningsHtml = "";
-    if (warnings.length > 0) {
-      warningsHtml = `<div class="calc-warnings">` +
-        warnings.map(w =>
-          `<div class="calc-warning-item">⚠️ At ${currentDailyPrompts} exchanges/day, <strong>${w.name}</strong> exhausts your $${budget} budget in ${formatDays(w.days)} days</div>`
-        ).join("") +
-        `</div>`;
-    }
+    const warningsHtml = warnings.length ? `
+      <div class="calc-warnings">
+        ${warnings.map(w => `
+          <div class="calc-warning-box" style="border-left-color:${w.color}">
+            ⚠️ At ${w.dailyPrompts} exchanges/day, <strong>${w.name}</strong> exhausts your $${w.budget} budget in <strong>${formatDays(w.days)} day${parseFloat(formatDays(w.days)) !== 1 ? 's' : ''}</strong>.
+          </div>`).join('')}
+      </div>` : '';
 
     resultsDiv.innerHTML = `
       <div class="calc-results-header">
         <div class="calc-results-title">Cost Comparison</div>
-        <div class="calc-results-sub">${inputTokens.toLocaleString()} input tokens + ${responseTokens.toLocaleString()} response tokens per exchange</div>
+        <div class="calc-results-sub">${inputTokens.toLocaleString()} input + ${responseTokens.toLocaleString()} response tokens per exchange</div>
       </div>
-      <div class="calc-result-cards">
-        ${cardsHtml}
-      </div>
-      ${warningsHtml}
-    `;
+      <div class="calc-result-cards">${cards}</div>
+      ${warningsHtml}`;
   }
 
-  function updateRefTable(inputTok, outputTok) {
-    const models = [
-      { id: "cref-haiku3",   input: 0.25, output: 1.25 },
-      { id: "cref-haiku35",  input: 0.80, output: 4.00 },
-      { id: "cref-sonnet4",  input: 3.00, output: 15.00 },
-      { id: "cref-opus4",    input: 15.00, output: 75.00 }
-    ];
-    models.forEach(m => {
-      const el = document.getElementById(m.id);
-      if (el) {
-        const cost = (inputTok * m.input + outputTok * m.output) / 1_000_000;
-        el.textContent = formatCost(cost);
+  // Textarea input
+  textarea?.addEventListener('input', () => {
+    clearScenario();
+    recalculate();
+  });
+
+  // Preset buttons
+  document.querySelectorAll('.calc-preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = CALC_PRESETS[btn.dataset.preset];
+      if (text && textarea) {
+        clearScenario();
+        textarea.value = text;
+        recalculate();
       }
     });
-  }
+  });
+
+  // Scenario cards
+  document.querySelectorAll('.calc-scenario-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const inTok = parseInt(card.dataset.inputTokens, 10);
+      const outTok = parseInt(card.dataset.outputTokens, 10);
+      const wasActive = card.classList.contains('active');
+
+      document.querySelectorAll('.calc-scenario-card').forEach(c => c.classList.remove('active'));
+
+      if (wasActive) {
+        clearScenario();
+      } else {
+        scenarioOverride = { inputTokens: inTok, outputTokens: outTok };
+        card.classList.add('active');
+        if (activeLabel) {
+          const key = `${inTok}-${outTok}`;
+          activeLabel.textContent = '📌 ' + (SCENARIO_LABELS[key] || `${inTok.toLocaleString()} in · ${outTok.toLocaleString()} out`);
+          activeLabel.classList.remove('hidden');
+        }
+        if (respNoteOverride) respNoteOverride.style.display = 'block';
+        document.querySelectorAll('.calc-resp-btn').forEach(b => b.disabled = true);
+      }
+      recalculate();
+    });
+  });
+
+  // Response length buttons
+  document.querySelectorAll('.calc-resp-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (scenarioOverride.outputTokens !== null) return;
+      document.querySelectorAll('.calc-resp-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const wrap = document.getElementById('calc-response-custom-wrap');
+      if (wrap) wrap.classList.toggle('hidden', btn.dataset.tokens !== 'custom');
+      recalculate();
+    });
+  });
+
+  document.getElementById('calc-response-custom')?.addEventListener('input', recalculate);
+
+  // Budget buttons
+  document.querySelectorAll('.calc-budget-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.calc-budget-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const wrap = document.getElementById('calc-budget-custom-wrap');
+      if (wrap) wrap.classList.toggle('hidden', btn.dataset.budget !== 'custom');
+      recalculate();
+    });
+  });
+
+  document.getElementById('calc-budget-custom')?.addEventListener('input', recalculate);
+  document.getElementById('calc-daily')?.addEventListener('input', recalculate);
+
+  // Model chips
+  document.querySelectorAll('.calc-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('active');
+      recalculate();
+    });
+  });
+
+  // Back button
+  document.getElementById('calc-back-btn')?.addEventListener('click', () => showView('home'));
+
+  recalculate();
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
