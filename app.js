@@ -7887,8 +7887,7 @@ function initCalculator() {
     });
   });
 
-  // Back button
-  document.getElementById('calc-back-btn')?.addEventListener('click', () => showView('home'));
+  // Breadcrumb wired globally by initNav
 
   recalculate();
 }

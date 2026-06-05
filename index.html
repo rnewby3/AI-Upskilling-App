@@ -241,7 +241,6 @@
   <!-- ── CALCULATOR ── -->
   <div id="view-calculator" class="view hidden">
     <div class="detail-back-bar">
-      <button class="btn ghost detail-back-btn" id="calc-back-btn">← Home</button>
       <span class="detail-breadcrumb"><button class="breadcrumb-home" data-goto="home">Home</button> › Token Cost Calculator</span>
     </div>
 
@@ -258,7 +257,7 @@
       <div class="calc-left">
 
         <!-- Card 1: Your Prompt -->
-        <div class="calc-card">
+        <div class="calc-card" id="calc-card-prompt">
           <div class="calc-card-header">
             <h4 class="calc-card-title">Your Prompt</h4>
             <div class="calc-stats-bar">
@@ -317,7 +316,7 @@
         </div>
 
         <!-- Card 2: Response Length -->
-        <div class="calc-card">
+        <div class="calc-card" id="calc-card-response">
           <h4 class="calc-card-title">Expected Response Length</h4>
           <div class="calc-response-btns">
             <button class="calc-resp-btn" data-tokens="150">Short<span class="calc-resp-sub">150 tokens</span></button>
@@ -338,7 +337,7 @@
       <div class="calc-right">
 
         <!-- Card 3: Models -->
-        <div class="calc-card">
+        <div class="calc-card" id="calc-card-models">
           <h4 class="calc-card-title">Models</h4>
 
           <div class="calc-vendor-group">
@@ -387,7 +386,7 @@
         </div>
 
         <!-- Card 4: Budget + Daily (merged) -->
-        <div class="calc-card">
+        <div class="calc-card" id="calc-card-budget">
           <div class="calc-budget-daily-row">
             <div class="calc-budget-section">
               <h4 class="calc-card-title">Monthly Budget</h4>
@@ -419,9 +418,9 @@
 
     </div><!-- /calc-layout -->
 
-    <!-- Token Reference Guide -->
-    <div class="calc-reference">
-      <h3 class="calc-reference-title">Token Reference Guide</h3>
+    <!-- Token Reference Guide (collapsible) -->
+    <details class="calc-reference">
+      <summary class="calc-reference-title">Token Reference Guide <span class="calc-ref-toggle-hint">— click to expand</span></summary>
       <div class="calc-ref-grid">
         <div class="calc-ref-row calc-ref-header"><span>Example</span><span>~Tokens</span></div>
         <div class="calc-ref-row"><span>"Hello"</span><span>1</span></div>
@@ -449,7 +448,7 @@
           </tbody>
         </table>
       </div>
-    </div>
+    </details>
 
   </div><!-- /view-calculator -->
 
