@@ -7738,10 +7738,9 @@ function initCalculator() {
     const sub = document.getElementById('calc-compare-sub');
     if (sub) sub.textContent = `${inputTokens.toLocaleString()} input + ${responseTokens.toLocaleString()} response tokens per exchange`;
     [
-      { id: 'cref-haiku3',  exchId: 'cref-haiku3-exch',  inp: 0.25,  out: 1.25 },
-      { id: 'cref-haiku35', exchId: 'cref-haiku35-exch', inp: 0.80,  out: 4.00 },
-      { id: 'cref-sonnet4', exchId: 'cref-sonnet4-exch', inp: 3.00,  out: 15.00 },
-      { id: 'cref-opus4',   exchId: 'cref-opus4-exch',   inp: 15.00, out: 75.00 },
+      { id: 'cref-haiku3',  exchId: 'cref-haiku3-exch',  inp: 1.00, out: 5.00 },
+      { id: 'cref-haiku35', exchId: 'cref-haiku35-exch', inp: 3.00, out: 15.00 },
+      { id: 'cref-sonnet4', exchId: 'cref-sonnet4-exch', inp: 5.00, out: 25.00 },
     ].forEach(({ id, exchId, inp, out }) => {
       const costEl = document.getElementById(id);
       const exchEl = document.getElementById(exchId);

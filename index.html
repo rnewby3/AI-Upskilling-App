@@ -364,17 +364,14 @@
           <div class="calc-vendor-group">
             <div class="calc-vendor-label" style="--vendor-color:#CC785C">Claude</div>
             <div class="calc-chips">
-              <button class="calc-chip active" data-model="claude-haiku-3" data-input="0.25" data-output="1.25" style="--chip-color:#CC785C">
-                <span class="calc-chip-name">Claude 3 Haiku</span><span class="calc-chip-price">$0.25/$1.25</span>
+              <button class="calc-chip active" data-model="claude-haiku-45" data-input="1.00" data-output="5.00" style="--chip-color:#CC785C">
+                <span class="calc-chip-name">Claude Haiku 4.5</span><span class="calc-chip-price">$1.00/$5.00</span>
               </button>
-              <button class="calc-chip active" data-model="claude-haiku-35" data-input="0.80" data-output="4.00" style="--chip-color:#CC785C">
-                <span class="calc-chip-name">Claude 3.5 Haiku</span><span class="calc-chip-price">$0.80/$4.00</span>
+              <button class="calc-chip active" data-model="claude-sonnet-46" data-input="3.00" data-output="15.00" style="--chip-color:#CC785C">
+                <span class="calc-chip-name">Claude Sonnet 4.6</span><span class="calc-chip-price">$3.00/$15.00</span>
               </button>
-              <button class="calc-chip active" data-model="claude-sonnet-4" data-input="3.00" data-output="15.00" style="--chip-color:#CC785C">
-                <span class="calc-chip-name">Claude Sonnet 4</span><span class="calc-chip-price">$3.00/$15.00</span>
-              </button>
-              <button class="calc-chip active" data-model="claude-opus-4" data-input="15.00" data-output="75.00" style="--chip-color:#CC785C">
-                <span class="calc-chip-name">Claude Opus 4</span><span class="calc-chip-price">$15.00/$75.00</span>
+              <button class="calc-chip active" data-model="claude-opus-47" data-input="5.00" data-output="25.00" style="--chip-color:#CC785C">
+                <span class="calc-chip-name">Claude Opus 4.7</span><span class="calc-chip-price">$5.00/$25.00</span>
               </button>
             </div>
           </div>
@@ -382,11 +379,11 @@
           <div class="calc-vendor-group">
             <div class="calc-vendor-label" style="--vendor-color:#111">OpenAI</div>
             <div class="calc-chips">
-              <button class="calc-chip" data-model="gpt-4o-mini" data-input="0.15" data-output="0.60" style="--chip-color:#111">
-                <span class="calc-chip-name">GPT-4o mini</span><span class="calc-chip-price">$0.15/$0.60</span>
+              <button class="calc-chip" data-model="gpt-54" data-input="2.50" data-output="15.00" style="--chip-color:#111">
+                <span class="calc-chip-name">GPT-5.4</span><span class="calc-chip-price">$2.50/$15.00</span>
               </button>
-              <button class="calc-chip" data-model="gpt-4o" data-input="2.50" data-output="10.00" style="--chip-color:#111">
-                <span class="calc-chip-name">GPT-4o</span><span class="calc-chip-price">$2.50/$10.00</span>
+              <button class="calc-chip" data-model="gpt-55" data-input="5.00" data-output="30.00" style="--chip-color:#111">
+                <span class="calc-chip-name">GPT-5.5</span><span class="calc-chip-price">$5.00/$30.00</span>
               </button>
             </div>
           </div>
@@ -394,11 +391,11 @@
           <div class="calc-vendor-group">
             <div class="calc-vendor-label" style="--vendor-color:#4285F4">Google</div>
             <div class="calc-chips">
-              <button class="calc-chip" data-model="gemini-flash-2" data-input="0.10" data-output="0.40" style="--chip-color:#4285F4">
-                <span class="calc-chip-name">Gemini 2.0 Flash</span><span class="calc-chip-price">$0.10/$0.40</span>
+              <button class="calc-chip" data-model="gemini-25-flash" data-input="0.30" data-output="2.50" style="--chip-color:#4285F4">
+                <span class="calc-chip-name">Gemini 2.5 Flash</span><span class="calc-chip-price">$0.30/$2.50</span>
               </button>
-              <button class="calc-chip" data-model="gemini-pro-15" data-input="1.25" data-output="5.00" style="--chip-color:#4285F4">
-                <span class="calc-chip-name">Gemini 1.5 Pro</span><span class="calc-chip-price">$1.25/$5.00</span>
+              <button class="calc-chip" data-model="gemini-25-pro" data-input="1.25" data-output="10.00" style="--chip-color:#4285F4">
+                <span class="calc-chip-name">Gemini 2.5 Pro</span><span class="calc-chip-price">$1.25/$10.00</span>
               </button>
             </div>
           </div>
@@ -442,7 +439,7 @@
     <!-- Comparison table — full width below the grid -->
     <div class="calc-compare-section" id="calc-compare-section">
       <div class="calc-compare-header">
-        <h4 class="calc-compare-title">Claude Model Cost Comparison</h4>
+        <h4 class="calc-compare-title">Claude Model Cost Comparison (2026)</h4>
         <span class="calc-compare-sub" id="calc-compare-sub">Enter a prompt or select a scenario to see live costs</span>
       </div>
       <div class="calc-ref-table-wrap">
@@ -451,10 +448,9 @@
             <tr><th>Model</th><th>Input Rate</th><th>Output Rate</th><th>Cost / exchange</th><th>Exchanges on $50</th></tr>
           </thead>
           <tbody>
-            <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude 3 Haiku</td><td>$0.25/1M</td><td>$1.25/1M</td><td id="cref-haiku3">—</td><td id="cref-haiku3-exch">—</td></tr>
-            <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude 3.5 Haiku</td><td>$0.80/1M</td><td>$4.00/1M</td><td id="cref-haiku35">—</td><td id="cref-haiku35-exch">—</td></tr>
-            <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude Sonnet 4</td><td>$3.00/1M</td><td>$15.00/1M</td><td id="cref-sonnet4">—</td><td id="cref-sonnet4-exch">—</td></tr>
-            <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude Opus 4</td><td>$15.00/1M</td><td>$75.00/1M</td><td id="cref-opus4">—</td><td id="cref-opus4-exch">—</td></tr>
+            <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude Haiku 4.5</td><td>$1.00/1M</td><td>$5.00/1M</td><td id="cref-haiku3">—</td><td id="cref-haiku3-exch">—</td></tr>
+            <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude Sonnet 4.6</td><td>$3.00/1M</td><td>$15.00/1M</td><td id="cref-haiku35">—</td><td id="cref-haiku35-exch">—</td></tr>
+            <tr><td><span class="calc-model-dot" style="background:#CC785C"></span>Claude Opus 4.7</td><td>$5.00/1M</td><td>$25.00/1M</td><td id="cref-sonnet4">—</td><td id="cref-sonnet4-exch">—</td></tr>
           </tbody>
         </table>
       </div>
